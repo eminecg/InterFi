@@ -34,7 +34,15 @@ contract User {
 
     function getBalance() public {}
 
-    function ageCalc() public {}
+
+    function ageCalc(uint256 birthday, uint256 today)
+        public
+        pure
+        returns (uint256)
+    {
+        uint startDate = birthday; // 2012-12-01 10:00:00
+        uint endDate = today; // 2012-12-07 10:00:00
+}
 
     function fund() public payable {}
 
