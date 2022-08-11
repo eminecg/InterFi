@@ -27,7 +27,11 @@ contract User {
         return balances[index];
     }
 
-    function ageCalc(uint256 birthday, uint256 today) public returns (uint256) {
+    function ageCalc(uint256 birthday, uint256 today)
+        public
+        pure
+        returns (uint256)
+    {
         uint startDate = birthday; // 2012-12-01 10:00:00
         uint endDate = today; // 2012-12-07 10:00:00
 
