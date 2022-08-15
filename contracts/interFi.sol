@@ -4,104 +4,99 @@ pragma solidity ^0.8.9;
 // Import this file to use console.log
 import "hardhat/console.sol";
 
-
+//0x0000000000000000000000000000000000000000
+//0x302955b74C969aA09bb270DAa775B65Fc9b7Bc29
+// 0x302955b74C969aA09bb270DAa775B65Fc9b7Bc29, 1723720445 ,Yiğit
+error This_Parent_Already_Exist();
 error InterFi__NotOwner();
 error Child__isUnderage();
 error Child__Cant_Have_Child_Without_Parents();
 error Child__Parent_Not_Found_Add_Parent_First();
 
-contract Interfi{
-
-    address public owner;
-    bool isUnderage = true;
+contract Interfi {
+    address private owner;
 
     struct Parent {
-        address parentAddress;
-        address[]  children;
+        address payable Address;
+        address[] children;
         string name;
     }
 
     struct Child {
-        address childAddress;
-        uint birthday;
-        address[] parents;
+        address payable Address;
+        address payable invester;
+        uint256 releaseTime;
+        uint256 amount;
+        bool isRelasable;
         string name;
     }
-
-    uint parentCount= 0;
-    uint childCount= 0;
 
     mapping(address => Child) public addressToChild;
     mapping(address => Parent) public addressToParent;
 
-   
-    mapping(address => address[]) public parentAddressToChilds;
-    mapping(address => uint256) public balances;
-
-    modifier onlyOwner (){
-    if (msg.sender != owner)
-        {revert InterFi__NotOwner();}
+    modifier onlyOwner() {
+        if (msg.sender != owner) {
+            revert InterFi__NotOwner();
+        }
         _;
     }
 
-    uint counter = 0;
+    function addParent(string memory _name) public {
+        Parent storage parent = addressToParent[msg.sender];
+        require(parent.Address == address(0), "This_Parent_Already_Exist");
 
-
-       address[]  childrens ;
-      function addParent(address payable _parent, string memory _name) public {  
-           
-        
-
-            addressToParent[_parent] = Parent({parentAddress:_parent,children:childrens,name:_name});
-            
-        } 
-
-        address[]  parents ;
-        function addChild(address payable _parent,address payable _child, uint256 _birthday ,address payable _otherParent, string memory _name) public {  
-           
-         parents.push(_parent);
-         parents.push(_otherParent);
-
-            addressToChild[_child] = Child({childAddress:_child,birthday:_birthday,parents:parents,name:_name});
-            addressToParent[_parent].children.push(_child);
-
-        }
-
-        function getBalance() public view returns (uint256) {
-            return address(this).balance;
-        }
-    
-        function ageCalc(uint256 birthdayInSec) public returns (uint256) {
-            uint256 ageInSec = (block.timestamp - birthdayInSec);
-            if ((ageInSec / 31536000) >= 18) {
-                isUnderage = false;
-            } else {
-                isUnderage = true;
-            }
-            return (ageInSec / 31536000); // year in seconds
-        }
-    
-    
-        function getChild(uint256 index) public view returns (address) {
-        }
-    
-        function fund() public payable {
-        }
-    
-        // burası çalışmıyor ??
-        function withdraw() public payable {
-            if (isUnderage) {
-                revert Child__isUnderage();
-            } else {}
-        }
-    
-        receive() external payable {
-            fund();
-        }
-    
-        fallback() external payable {
-            fund();
-        }
+        parent.name = _name;
+        parent.Address = payable(msg.sender);
     }
 
-    
+    function addChild(
+        address payable _child,
+        uint256 _releaseTime,
+        string memory _name
+    ) public {
+        Parent storage parent = addressToParent[msg.sender];
+        require(parent.Address != address(0), "There_Is_No_Such_Parent()");
+
+        Child storage child = addressToChild[_child];
+        require(child.Address == address(0), "This_Child_Already_Exist()");
+
+        child.Address = _child;
+        child.releaseTime = _releaseTime;
+        child.amount = 0;
+        child.invester = payable(msg.sender);
+        child.name = _name;
+
+        parent.children.push(_child);
+    }
+
+    function ageCalc(address payable _child) public returns (bool) {
+        console.log(block.timestamp);
+        Child storage child = addressToChild[_child];
+        uint256 releaseTime = child.releaseTime;
+        console.log(releaseTime);
+        uint256 ageCheck = (block.timestamp - releaseTime);
+        console.log(ageCheck);
+        if (block.timestamp - releaseTime > 0) {
+            child.isRelasable = true;
+        } else {
+            child.isRelasable = false;
+        }
+        return child.isRelasable;
+    }
+
+    function getBalance() public view returns (uint256) {
+        return address(this).balance;
+    }
+
+    function getChildren() public view returns (address[] memory) {
+        return addressToParent[msg.sender].children;
+    }
+
+    function fund() public payable {}
+
+    function withdraw() public payable {}
+
+    receive() external payable {}
+
+    fallback() external payable {}
+}
