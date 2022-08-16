@@ -2,5 +2,6 @@
     "tabWidth": 4,
     "useTabs": false,
     "semi": false,
-    "singleQuote": false
+    "singleQuote": false,
+    "emptyFunctions": true
 }
