@@ -13,10 +13,10 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
         )
     }
-    await deploy("interFi", {
+    await deploy("InterFi", {
         from: deployer,
         args: [],
         log: true
     });
 }
-module.exports.tags = ["interFi"]
+module.exports.tags = ["all", "InterFi"]

@@ -16,18 +16,14 @@ import "hardhat/console.sol";
 0x5c6B0f7Bf3E7ce046039Bd8FABdfD3f9F5021678
 */
 
-error This_Parent_Already_Exist();
-error InterFi__NotOwner();
-error Child__isUnderage();
-error Child__Cant_Have_Child_Without_Parents();
-error Child__Parent_Not_Found_Add_Parent_First();
+error NotOwner();
 error There_is_no_child_belongs_parent();
 error There_is_no_enough_child_balance_to_draw();
 error Role_is_not_valid();
-error  Not_released_yet();
+error Not_released_yet();
 error There_is_no_user();
 
-contract Interfi {
+contract InterFi {
     address private owner;
 
     struct Parent {
@@ -48,21 +44,23 @@ contract Interfi {
     mapping(address => Child) private addressToChild;
     mapping(address => Parent) private addressToParent;
 
+    constructor() {
+        owner = msg.sender;
+    }
+
     modifier onlyOwner() {
         if (msg.sender != owner) {
-            revert InterFi__NotOwner();
+            revert NotOwner();
         }
         _;
     }
-    modifier onlyisReleaseState(){
+    modifier onlyisReleaseState() {
         bool state = ageCalc(payable(msg.sender));
-        if(state== false){
+        if (state == false) {
             revert Not_released_yet();
         }
-        _; 
-
+        _;
     }
-
 
     function addParent(string memory _name) public {
         Parent storage parent = addressToParent[msg.sender];
@@ -78,28 +76,27 @@ contract Interfi {
         string memory _name
     ) public {
         Parent storage parent = addressToParent[msg.sender];
-        require(parent.Address != address(0), "There_Is_No_Such_Parent()");
+        require(parent.Address != address(0), "There_Is_No_Such_Parent");
 
         Child storage child = addressToChild[_child];
-        require(child.Address == address(0), "This_Child_Already_Exist()");
+        require(child.Address == address(0), "This_Child_Already_Exist");
 
         child.Address = _child;
         child.releaseTime = _releaseTime;
         child.amount = 0;
         child.invester = payable(msg.sender);
         child.name = _name;
-        
+
         parent.children.push(_child);
     }
 
-  function ageCalc(address payable _child) public returns (bool) {
+    function ageCalc(address payable _child) public returns (bool) {
         console.log(block.timestamp);
         Child storage child = addressToChild[_child];
         uint256 releaseTime = child.releaseTime;
         console.log(releaseTime);
-        
-        
-        if (block.timestamp > releaseTime ) {
+
+        if (block.timestamp > releaseTime) {
             child.isReleasable = true;
         } else {
             child.isReleasable = false;
@@ -107,16 +104,19 @@ contract Interfi {
         return child.isReleasable;
     }
 
-    // Getter Functions 
+    // Getter Functions
+    function getOwner() public view returns (address) {
+        return owner;
+    }
 
     // returns total balance of contract
-    function getBalance() public view returns (uint256) {                                           // not tested
+    function getBalance() public view returns (uint256) {
+        // not tested
         return address(this).balance;
     }
 
     // returns given child  address amount                                                          // not tested
     function getAmount(address payable _child) public view returns (uint256) {
-
         Child storage child = addressToChild[_child];
         return child.amount;
     }
@@ -126,141 +126,114 @@ contract Interfi {
     }
 
     // returns role of sender address
-    function getRole() public view returns(string memory) {                                           
-       
+    function getRole() public view returns (string memory) {
         Parent storage parent = addressToParent[msg.sender];
         Child storage child = addressToChild[msg.sender];
-        
-        if( (parent.Address!= address(0))  ){
+
+        if ((parent.Address != address(0))) {
             return "Parent";
-        }
-        else if(child.Address != address(0)) {
+        } else if (child.Address != address(0)) {
             return "Child";
+        } else {
+            return "Unregistered";
         }
-        else{
-            return "Unregister ";
-        }       
-    }
-    
-    // get parent struct 
-    function getParent()  public view returns(Parent memory) {                                               
-            Parent storage parent = addressToParent[msg.sender];
-            if( (parent.Address!= address(0))  ){
-                return parent;  
-            }
-            else{
-                revert There_is_no_user(); 
-            }       
     }
 
-     // get child struct 
-    function getChild()  public view returns(Child memory) {                                               
-           
-            Child storage child = addressToChild[msg.sender];
-            if( (child.Address!= address(0))  ){
-                return child;  
-            }
-            else{
-                revert There_is_no_user(); 
-            }
-                
+    // get parent struct
+    function getParent() public view returns (Parent memory) {
+        Parent storage parent = addressToParent[msg.sender];
+        if ((parent.Address != address(0))) {
+            return parent;
+        } else {
+            revert There_is_no_user();
+        }
     }
-    
+
+    // get child struct
+    function getChild() public view returns (Child memory) {
+        Child storage child = addressToChild[msg.sender];
+        if ((child.Address != address(0))) {
+            return child;
+        } else {
+            revert There_is_no_user();
+        }
+    }
 
     // get amount of ether from child balance , send to the msg.sender wallet
     function fund(address payable _child) public payable {
-         // check the parent exist
+        // check the parent exist
         Parent storage parent = addressToParent[msg.sender];
         require(parent.Address != address(0), "There_Is_No_Such_Parent()");
-        
-        // check this child belongs to this parent 
-        uint size =parent.children.length;
-        uint index;
-        for (uint i = 0; i < size; i++) {
-            if(parent.children[i]==_child){
-                index=i;            
+
+        // check this child belongs to this parent
+        uint256 size = parent.children.length;
+        uint256 index;
+        for (uint256 i = 0; i < size; i++) {
+            if (parent.children[i] == _child) {
+                index = i;
             }
         }
-        if(index>=0){
-            
-            Child storage child = addressToChild[_child];                        
+        if (index >= 0) {
+            Child storage child = addressToChild[_child];
             emit Purchase(msg.sender, 1);
-            child.amount+=msg.value;
-        }
-        else{
-            
+            child.amount += msg.value;
+        } else {
             revert There_is_no_child_belongs_parent();
         }
-
     }
 
     receive() external payable {}
 
     fallback() external payable {}
 
-    event Purchase(
-        address indexed _invester,
-        uint256 _amount
-    );
-    
-    // parent can get amount of coin from his/her child balance ,msg.sender has to be parent
-    function withdrawParent(address payable _child, uint _amount) public payable {
-                 
+    event Purchase(address indexed _invester, uint256 _amount);
 
+    // parent can get amount of coin from his/her child balance ,msg.sender has to be parent
+    function withdrawParent(address payable _child, uint256 _amount)
+        public
+        payable
+    {
         // check the parent exist
         Parent storage parent = addressToParent[msg.sender];
         require(parent.Address != address(0), "There_Is_No_Such_Parent()");
-        
-        // check this child belongs to this parent 
-        uint size =parent.children.length;
-        uint index;
-        for (uint i = 0; i < size; i++) {
-            if(parent.children[i]==_child){
-                index=i;            
+
+        // check this child belongs to this parent
+        uint256 size = parent.children.length;
+        uint256 index;
+        for (uint256 i = 0; i < size; i++) {
+            if (parent.children[i] == _child) {
+                index = i;
             }
         }
-        if(index>=0){
-            
-            Child storage child = addressToChild[_child];                        
+        if (index >= 0) {
+            Child storage child = addressToChild[_child];
             emit Purchase(msg.sender, 1);
-            child.amount-=_amount;
-            payable(msg.sender).transfer(_amount); // send the amount of value to the parent address 
-            
-        }
-        else{
-            
+            child.amount -= _amount;
+            payable(msg.sender).transfer(_amount); // send the amount of value to the parent address
+        } else {
             revert There_is_no_child_belongs_parent();
         }
-
     }
 
     //  child can get amount of coin from his/her balance, msg.sender has to be child
-     function withdrawChild(address payable _child,uint _amount) public payable onlyisReleaseState {
-      
+    function withdrawChild(address payable _child, uint256 _amount)
+        public
+        payable
+        onlyisReleaseState
+    {
         // check the child exist
-        Child storage child = addressToChild[_child];     
-        require(child.Address != address(0), "There_Is_No_Such_Child()");  
+        Child storage child = addressToChild[_child];
+        require(child.Address != address(0), "There_Is_No_Such_Child()");
 
-        
-        if(child.amount>=_amount){
-            
-                               
+        if (child.amount >= _amount) {
             emit Purchase(msg.sender, 1);
-            child.amount-=_amount;
-            payable(msg.sender).transfer(_amount); // send the amount of value to the parent address 
-            
-        }
-        else{
-            
+            child.amount -= _amount;
+            payable(msg.sender).transfer(_amount); // send the amount of value to the parent address
+        } else {
             revert There_is_no_enough_child_balance_to_draw();
-        }        
-
-
-     }
-
-    
+        }
+    }
 }
-
 
 /*
 
