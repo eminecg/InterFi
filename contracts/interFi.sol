@@ -5,14 +5,16 @@ pragma solidity ^0.8.9;
 import "hardhat/console.sol";
 
 //0x0000000000000000000000000000000000000000
-//0x302955b74C969aA09bb270DAa775B65Fc9b7Bc29
-// 0x302955b74C969aA09bb270DAa775B65Fc9b7Bc29, 1723720445 ,Yiğit
+//0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB
+//0x617F2E2fD72FD9D5503197092aC168c91465E7f2, 1723720445 ,Yiğit
+//0x617F2E2fD72FD9D5503197092aC168c91465E7f2
 error This_Parent_Already_Exist();
 error InterFi__NotOwner();
 error Child__isUnderage();
 error Child__Cant_Have_Child_Without_Parents();
 error Child__Parent_Not_Found_Add_Parent_First();
 error There_is_no_child_belongs_parent();
+error There_is_no_enough_child_balance_to_draw();
 
 contract Interfi {
     address private owner;
@@ -92,17 +94,16 @@ contract Interfi {
         return addressToParent[msg.sender].children;
     }
 
-    event Purchase(address indexed _invester, uint256 _amount);
-
+    // get amount of ether from child balance , send to the msg.sender wallet
     function fund(address payable _child) public payable {
-        // check the parent exist
+        // check the parent exis
         Parent storage parent = addressToParent[msg.sender];
         require(parent.Address != address(0), "There_Is_No_Such_Parent()");
 
         // check this child belongs to this parent
-        uint size = parent.children.length;
-        uint index;
-        for (uint i = 0; i < size; i++) {
+        uint256 size = parent.children.length;
+        uint256 index;
+        for (uint256 i = 0; i < size; i++) {
             if (parent.children[i] == _child) {
                 index = i;
             }
@@ -121,4 +122,54 @@ contract Interfi {
     receive() external payable {}
 
     fallback() external payable {}
+
+    event Purchase(address indexed _invester, uint256 _amount);
+
+    // parent can get amount of coin from his/her child balance ,msg.sender has to be parent
+    function withdrawParent(address payable _child, uint256 _amount)
+        public
+        payable
+    {
+        // check the parent exist
+        Parent storage parent = addressToParent[msg.sender];
+        require(parent.Address != address(0), "There_Is_No_Such_Parent()");
+
+        // check this child belongs to this parent
+        uint256 size = parent.children.length;
+        uint256 index;
+        for (uint256 i = 0; i < size; i++) {
+            if (parent.children[i] == _child) {
+                index = i;
+            }
+        }
+        if (index >= 0) {
+            Child storage child = addressToChild[_child];
+            emit Purchase(msg.sender, 1);
+            child.amount -= _amount;
+            payable(msg.sender).transfer(_amount); // send the amount of value to the parent address
+        } else {
+            revert There_is_no_child_belongs_parent();
+        }
+    }
+
+    //  child can get amount of coin from his/her balance, msg.sender has to be child
+    function withdrawChild(address payable _child, uint256 _amount)
+        public
+        payable
+    {
+        // check the child exist
+        Child storage child = addressToChild[_child];
+        require(child.Address != address(0), "There_Is_No_Such_Child()");
+
+        console.log(_amount);
+        console.log("\n");
+        console.log(child.amount);
+        if (child.amount >= _amount) {
+            emit Purchase(msg.sender, 1);
+            child.amount -= _amount;
+            payable(msg.sender).transfer(_amount); // send the amount of value to the parent address
+        } else {
+            revert There_is_no_enough_child_balance_to_draw();
+        }
+    }
 }
