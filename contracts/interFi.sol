@@ -12,6 +12,7 @@ error InterFi__NotOwner();
 error Child__isUnderage();
 error Child__Cant_Have_Child_Without_Parents();
 error Child__Parent_Not_Found_Add_Parent_First();
+error There_is_no_child_belongs_parent();
 
 contract Interfi {
     address private owner;
@@ -101,6 +102,10 @@ contract Interfi {
         return addressToParent[msg.sender].children;
     }
 
+    event Purchase(
+        address indexed _invester,
+        uint256 _amount
+    );
     function fund(address payable _child) public payable {
                  
 
@@ -129,7 +134,7 @@ contract Interfi {
 
     }
 
-}
+
 
     function withdraw() public payable {}
 
