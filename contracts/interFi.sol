@@ -69,19 +69,28 @@ contract Interfi {
         parent.children.push(_child);
     }
 
-    function ageCalc(address payable _child) public returns (bool) {
+  function ageCalc(address payable _child) public returns (bool) {
         console.log(block.timestamp);
         Child storage child = addressToChild[_child];
         uint256 releaseTime = child.releaseTime;
         console.log(releaseTime);
-        uint256 ageCheck = (block.timestamp - releaseTime);
-        console.log(ageCheck);
-        if (block.timestamp - releaseTime > 0) {
+        
+        
+        if (block.timestamp > releaseTime ) {
             child.isRelasable = true;
         } else {
             child.isRelasable = false;
         }
         return child.isRelasable;
+    }
+
+
+    function getBalance() public view returns (uint256) {
+        return address(this).balance;
+    }
+
+    function getChildren() public view returns (address[] memory) {
+        return addressToParent[msg.sender].children;
     }
 
     function getBalance() public view returns (uint256) {
