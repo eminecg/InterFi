@@ -92,7 +92,35 @@ contract Interfi {
         return addressToParent[msg.sender].children;
     }
 
-    function fund() public payable {}
+    function fund(address payable _child) public payable {
+                 
+
+        // check the parent exist
+        Parent storage parent = addressToParent[msg.sender];
+        require(parent.Address != address(0), "There_Is_No_Such_Parent()");
+        
+        // check this child belongs to this parent 
+        uint size =parent.children.length;
+        uint index;
+        for (uint i = 0; i < size; i++) {
+            if(parent.children[i]==_child){
+                index=i;            
+            }
+        }
+        if(index>=0){
+            
+            Child storage child = addressToChild[_child];                        
+            emit Purchase(msg.sender, 1);
+            child.amount+=msg.value;
+        }
+        else{
+            
+            revert There_is_no_child_belongs_parent();
+        }
+
+    }
+
+}
 
     function withdraw() public payable {}
 
