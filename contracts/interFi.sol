@@ -70,14 +70,13 @@ contract Interfi {
         parent.children.push(_child);
     }
 
-  function ageCalc(address payable _child) public returns (bool) {
+    function ageCalc(address payable _child) public returns (bool) {
         console.log(block.timestamp);
         Child storage child = addressToChild[_child];
         uint256 releaseTime = child.releaseTime;
         console.log(releaseTime);
-        
-        
-        if (block.timestamp > releaseTime ) {
+
+        if (block.timestamp > releaseTime) {
             child.isRelasable = true;
         } else {
             child.isRelasable = false;
@@ -85,7 +84,6 @@ contract Interfi {
         return child.isRelasable;
     }
 
-
     function getBalance() public view returns (uint256) {
         return address(this).balance;
     }
@@ -94,47 +92,29 @@ contract Interfi {
         return addressToParent[msg.sender].children;
     }
 
-    function getBalance() public view returns (uint256) {
-        return address(this).balance;
-    }
+    event Purchase(address indexed _invester, uint256 _amount);
 
-    function getChildren() public view returns (address[] memory) {
-        return addressToParent[msg.sender].children;
-    }
-
-    event Purchase(
-        address indexed _invester,
-        uint256 _amount
-    );
     function fund(address payable _child) public payable {
-                 
-
         // check the parent exist
         Parent storage parent = addressToParent[msg.sender];
         require(parent.Address != address(0), "There_Is_No_Such_Parent()");
-        
-        // check this child belongs to this parent 
-        uint size =parent.children.length;
+
+        // check this child belongs to this parent
+        uint size = parent.children.length;
         uint index;
         for (uint i = 0; i < size; i++) {
-            if(parent.children[i]==_child){
-                index=i;            
+            if (parent.children[i] == _child) {
+                index = i;
             }
         }
-        if(index>=0){
-            
-            Child storage child = addressToChild[_child];                        
+        if (index >= 0) {
+            Child storage child = addressToChild[_child];
             emit Purchase(msg.sender, 1);
-            child.amount+=msg.value;
-        }
-        else{
-            
+            child.amount += msg.value;
+        } else {
             revert There_is_no_child_belongs_parent();
         }
-
     }
-
-
 
     function withdraw() public payable {}
 
