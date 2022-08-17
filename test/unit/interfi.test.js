@@ -215,8 +215,69 @@ describe("InterFi", function () {
             const response = await interFi.getAmount(child1.address)
             expect(response.toString()).to.be.equal(expectedValue);
         })
+     
+         it("getAmount returns the false amount after fund the child account", async () => {
+             // add parent and child
+            await interFi.addParent(parentName)
+            await interFi.addChild(child2.address, givenReleaseTime, childName)
+
+            // fund the child
+            await interFi.fund(child1.address, {value :sendValue})
+            await interFi.fund(child2.address, {value :1})
+
+            const response = await interFi.getAmount(child2.address)
+            expect(response.toString()).to.not.equal(expectedValue)
+         })
+    
        
     })
+
+    // test for getRole
+    describe("getRole", function () {
+        it("getRole returns role for parent ", async () => {
+            
+            // add parent 
+            await interFi.addParent(parentName)
+            const response = await interFi.getRole()
+            expect(response).to.be.equal("Parent");
+        }),
+        it("getRole returns role for child", async () => {
+            
+
+            await interFi.addParent(parentName)
+            await interFi.addChild(child1.address, givenReleaseTime, childName)
+            //parent = child1.address
+            const response = await interFi.connect(child1).getRole()
+            expect(response).to.be.equal("Child");
+        }),
+        it("getRole returns the role as unregistered ", async () => {
+            parent = notParent.address
+            const response = await interFi.getRole()
+            expect(response).to.be.equal("Unregistered");
+        })
+        
+    })
+
+    describe("getChild", function () {
+        beforeEach(async () => {
+            await interFi.addParent(parentName)
+            await interFi.addChild(child1.address, givenReleaseTime, childName)
+        })
+        it("getChild from map succesfully", async () => {
+            const response = await interFi.connect(child1).getChild()
+            expect(response.name).to.be.equal("YY")
+        })
+    })
+    describe("getParent", function () {
+        beforeEach(async () => {
+            await interFi.addParent(parentName)
+        })
+        it("getParent from map succesfully", async () => {
+            const response = await interFi.getParent()
+            expect(response.name).to.be.equal("XX")
+        })
+    })
+
 })
 
    

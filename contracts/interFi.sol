@@ -129,7 +129,7 @@ contract InterFi {
         Parent storage parent = addressToParent[msg.sender];
         Child storage child = addressToChild[msg.sender];
 
-        if ((parent.Address != address(0))) {
+        if (parent.Address != address(0)) {
             return "Parent";
         } else if (child.Address != address(0)) {
             return "Child";
