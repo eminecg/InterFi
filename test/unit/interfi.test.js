@@ -278,6 +278,44 @@ describe("InterFi", function () {
         })
     })
 
+
+    
+    describe("getChildren",function(){
+        beforeEach(async () => {
+            await interFi.addParent(parentName)
+            await interFi.addChild(child1.address, givenReleaseTime, childName)
+            await interFi.addChild(child2.address, secondReleaseTime, childName)
+            
+            
+        })
+       
+
+
+        it("getChildren returns the correct array",async() => {
+            const response = await interFi.getChildren([])
+            expect(response).to.be.an('array').that.length(2);
+            expect(response[0]).to.be.equal(child1.address)
+            expect(response[1]).to.be.equal(child2.address)
+
+        }),
+        it("getChildren returns the wrong array",async() => {
+            child1=notChild
+            child2 = notChild
+            const response = await interFi.getChildren([]);
+            expect(response).to.be.an('array').that.length(2)
+            expect(response[0]).to.not.equal(child1.address)
+            expect(response[1]).to.not.equal(child2.address)
+
+
+
+
+        })
+        
+    
+
+    })
+
+
 })
 
    
