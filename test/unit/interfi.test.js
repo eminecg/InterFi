@@ -14,6 +14,10 @@ describe("InterFi", function () {
     let withdrawValue = ethers.utils.parseEther("1")
     let biggerValue = ethers.utils.parseEther("2")
 
+    //emine
+    const initalBalance= ethers.utils.parseEther("0")
+    const expectedValue = ethers.utils.parseEther("2")
+
     beforeEach(async () => {
         [parent, child1, child2, notParent, notChild] = await ethers.getSigners()
         interFiFactory = await ethers.getContractFactory("InterFi")
@@ -156,4 +160,64 @@ describe("InterFi", function () {
         })
     })
 
+
+
+    describe("getOwner", function () {
+        it("getOwner returns the correct address", async () => {
+            const response = await interFi.getOwner()
+            expect(response).to.be.equal(parent.address);
+        }),
+        it("getOwner returns the wrong address when calling from other account", async () => {
+            parent = notParent
+            const response = await interFi.getOwner()        
+            expect(response).to.not.be.equal(parent.address);
+            
+        })
+    
+    });
+    // test for getBalance
+    describe("getBalance", function () {
+        it("getBalance returns the correct balance", async () => {     // aslında hatalı bigInt (00x)dönüyor     // not working well 
+            const response = await interFi.getBalance()
+            console.log("getBalance response: " )
+            console.log(response);
+            expect(response.toString()).to.be.equal(initalBalance);
+        }),
+        // should stop on modifier when calling from other account
+        it("getBalance reverted on modifier when calling from other account", async () => { // working
+            parent = notParent
+            const response = await interFi.getBalance()
+            expect(response).to.be.reverted
+        }),
+        // fund the contract to any address, check the balance 
+        it("getBalance returns the correct balance after funding", async () => {      // not working well
+            
+            
+            await interFi.addParent(parentName)
+            
+            await interFi.addChild(child1.address, givenReleaseTime, childName)
+            
+            await interFi.fund(child1.address, {value:sendValue})   // send 2 eth
+            const response = await interFi.getBalance()
+            expect(response.toString()).to.be.equal(expectedValue);  // expected 2 eth
+        })
+    }),
+       
+    // test for  getAmount 
+    describe("getAmount", function () {
+        it("getAmount returns the correct amount after fund the child account", async () => {
+            // add parent and child
+            await interFi.addParent(parentName)
+            await interFi.addChild(child1.address, givenReleaseTime, childName)
+            // fund the child
+            await interFi.fund(child1.address, {value :sendValue})
+            
+            const response = await interFi.getAmount(child1.address)
+            expect(response.toString()).to.be.equal(expectedValue);
+        })
+       
+    })
 })
+
+   
+ 

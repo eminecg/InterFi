@@ -109,7 +109,7 @@ contract InterFi {
     }
 
     // returns total balance of contract
-    function getBalance() public view returns (uint256) {
+    function getBalance() public view onlyOwner returns (uint256) {
         // not tested
         return address(this).balance;
     }
