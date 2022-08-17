@@ -7,12 +7,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deployer } = await getNamedAccounts();
     const chainId = network.config.chainId
 
-    if (developmentChain.includes(network.name)) {
-        console.log("Local Network detected! Deploying Mocks")
-        await deploy(
-
-        )
-    }
     await deploy("InterFi", {
         from: deployer,
         args: [],
