@@ -86,22 +86,20 @@ contract InterFi {
         child.amount = 0;
         child.invester = payable(msg.sender);
         child.name = _name;
-
         parent.children.push(_child);
     }
 
-    function ageCalc(address payable _child) public returns (bool) {
+    function ageCalc(address payable _child) public view returns (bool) {
         console.log(block.timestamp);
         Child storage child = addressToChild[_child];
         uint256 releaseTime = child.releaseTime;
         console.log(releaseTime);
 
         if (block.timestamp > releaseTime) {
-            child.isReleasable = true;
+            return true;
         } else {
-            child.isReleasable = false;
+            return false;
         }
-        return child.isReleasable;
     }
 
     // Getter Functions
@@ -163,7 +161,7 @@ contract InterFi {
     function fund(address payable _child) public payable {
         // check the parent exist
         Parent storage parent = addressToParent[msg.sender];
-        require(parent.Address != address(0), "There_Is_No_Such_Parent()");
+        require(parent.Address != address(0), "There_Is_No_Such_Parent");
 
         // check this child belongs to this parent
         uint256 size = parent.children.length;
@@ -195,7 +193,7 @@ contract InterFi {
     {
         // check the parent exist
         Parent storage parent = addressToParent[msg.sender];
-        require(parent.Address != address(0), "There_Is_No_Such_Parent()");
+        require(parent.Address != address(0), "There_Is_No_Such_Parent");
 
         // check this child belongs to this parent
         uint256 size = parent.children.length;
