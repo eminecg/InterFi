@@ -5,16 +5,17 @@ const { developmentChains } = require("../../helper-hardhat-config")
 
 describe("InterFi", function () {
     let interFi
-    let parent, child1, child2, notParent
+    let parent, child1, child2, notParent, notChild
     let parentName = "XX"
     let childName = "YY"
     let givenReleaseTime = 1723830394 // 2024-08-16
     let secondReleaseTime = 986371774 // 2001-04-04
     let sendValue = ethers.utils.parseEther("2")
     let withdrawValue = ethers.utils.parseEther("1")
+    let biggerValue = ethers.utils.parseEther("2")
 
     beforeEach(async () => {
-        [parent, child1, child2, notParent] = await ethers.getSigners()
+        [parent, child1, child2, notParent, notChild] = await ethers.getSigners()
         interFiFactory = await ethers.getContractFactory("InterFi")
         interFi = await interFiFactory.deploy()
         await interFi.deployed()
@@ -50,7 +51,7 @@ describe("InterFi", function () {
         })
         it("Add child gives error due to because there is no such parent", async () => {
             await interFi.addParent(parentName)
-            parent = child2
+            parent = notParent
             const response = await interFi.addChild(child1.address, givenReleaseTime, childName)
             expect(response).to.be.revertedWith("There_Is_No_Such_Parent")
         })
@@ -99,10 +100,10 @@ describe("InterFi", function () {
         beforeEach(async () => {
             await interFi.addParent(parentName)
             await interFi.addChild(child1.address, givenReleaseTime, childName)
+            await interFi.fund(child1.address, { value: sendValue })
         })
 
         it("withdraw parent succesfully", async () => {
-            await interFi.fund(child1.address, { value: sendValue })
             const response = await interFi.withdrawParent(child1.address, withdrawValue)
             expect(await interFi.getAmount(child1.address)).to.equal(withdrawValue)
         })
@@ -112,20 +113,23 @@ describe("InterFi", function () {
             expect(response).to.be.revertedWith("There_Is_No_Such_Parent")
         })
         it("withdraw parent gives error due to no child", async () => {
-            interFi.connect(parent)
-            await interFi.addParent(parentName)
-            const response = await interFi.withdrawParent(notParentChild.address, _amountToDraw)
-            expect(response).to.be.revertedWith("There_Is_No_Such_Child")
+            const response = await interFi.withdrawParent(notChild.address, 0)
+            expect(response).to.be.reverted
         })
-
         it("withdraw parent gives error due to not enough amount", async () => {
-            await interFi.addParent(parentName)
-            await interFi.addChild(child1.address, givenReleaseTime, childName)
             // call fund to give amount to the child first to make sure it is not enough to withdraw
-            await interFi.fund(child1.address, _notEnoughAmount)
-            const response = await interFi.withdrawParent(child1.address, _amountToDraw)
-            expect(response).to.be.revertedWith("Not_Enough_Amount")
+            const response = await interFi.withdrawParent(child1.address, biggerValue)
+            expect(response).to.be.reverted
         })
 
     })
+
+    describe("withdrawChild", function () {
+
+        beforeEach(async () => {
+
+        })
+    })
+
+
 })

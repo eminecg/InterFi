@@ -22,6 +22,7 @@ error There_is_no_enough_child_balance_to_draw();
 error Role_is_not_valid();
 error Not_released_yet();
 error There_is_no_user();
+error Not_Enough_Funds();
 
 contract InterFi {
     address private owner;
@@ -197,15 +198,18 @@ contract InterFi {
 
         // check this child belongs to this parent
         uint256 size = parent.children.length;
-        uint256 index;
+        bool index = false;
         for (uint256 i = 0; i < size; i++) {
             if (parent.children[i] == _child) {
-                index = i;
+                index = true;
             }
         }
-        if (index >= 0) {
+        if (index) {
             Child storage child = addressToChild[_child];
             emit Purchase(msg.sender, 1);
+            if (child.amount < _amount) {
+                revert Not_Enough_Funds();
+            }
             child.amount -= _amount;
             payable(msg.sender).transfer(_amount); // send the amount of value to the parent address
         } else {
