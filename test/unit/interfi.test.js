@@ -1,3 +1,4 @@
+const { Interface } = require("@ethersproject/abi")
 const { assert, expect } = require("chai")
 const { ethers } = require("hardhat")
 const { developmentChains } = require("../../helper-hardhat-config")
@@ -15,7 +16,7 @@ describe("InterFi", function () {
     let biggerValue = ethers.utils.parseEther("2")
 
     //emine
-    const initalBalance= ethers.utils.parseEther("0")
+    const initalBalance = ethers.utils.parseEther("0")
     const expectedValue = ethers.utils.parseEther("2")
 
     beforeEach(async () => {
@@ -167,95 +168,85 @@ describe("InterFi", function () {
             const response = await interFi.getOwner()
             expect(response).to.be.equal(parent.address);
         }),
-        it("getOwner returns the wrong address when calling from other account", async () => {
-            parent = notParent
-            const response = await interFi.getOwner()        
-            expect(response).to.not.be.equal(parent.address);
-            
-        })
-    
+            it("getOwner returns the wrong address when calling from other account", async () => {
+                const response = await interFi.connect(notParent).getOwner
+                expect(response).to.not.be.equal(parent.address);
+
+            })
+
     });
     // test for getBalance
     describe("getBalance", function () {
         it("getBalance returns the correct balance", async () => {     // aslında hatalı bigInt (00x)dönüyor     // not working well 
             const response = await interFi.getBalance()
-            console.log("getBalance response: " )
+            console.log("getBalance response: ")
             console.log(response);
             expect(response.toString()).to.be.equal(initalBalance);
         }),
-        // should stop on modifier when calling from other account
-        it("getBalance reverted on modifier when calling from other account", async () => { // working
-            parent = notParent
-            const response = await interFi.getBalance()
-            expect(response).to.be.reverted
-        }),
-        // fund the contract to any address, check the balance 
-        it("getBalance returns the correct balance after funding", async () => {      // not working well
-            
-            
-            await interFi.addParent(parentName)
-            
-            await interFi.addChild(child1.address, givenReleaseTime, childName)
-            
-            await interFi.fund(child1.address, {value:sendValue})   // send 2 eth
-            const response = await interFi.getBalance()
-            expect(response.toString()).to.be.equal(expectedValue);  // expected 2 eth
-        })
+            // should stop on modifier when calling from other account
+            it("getBalance reverted on modifier when calling from other account", async () => { // working
+                const response = await interFi.connect(notParent).getBalance
+                expect(response).to.be.reverted
+            }),
+            // fund the contract to any address, check the balance 
+            it("getBalance returns the correct balance after funding", async () => {      // not working well
+
+                await interFi.addParent(parentName)
+                await interFi.addChild(child1.address, givenReleaseTime, childName)
+                await interFi.fund(child1.address, { value: sendValue })   // send 2 eth
+                const response = await interFi.getBalance()
+                expect(response.toString()).to.be.equal(expectedValue);  // expected 2 eth
+            })
     }),
-       
-    // test for  getAmount 
-    describe("getAmount", function () {
-        it("getAmount returns the correct amount after fund the child account", async () => {
-            // add parent and child
-            await interFi.addParent(parentName)
-            await interFi.addChild(child1.address, givenReleaseTime, childName)
-            // fund the child
-            await interFi.fund(child1.address, {value :sendValue})
-            
-            const response = await interFi.getAmount(child1.address)
-            expect(response.toString()).to.be.equal(expectedValue);
+
+        // test for  getAmount 
+        describe("getAmount", function () {
+            it("getAmount returns the correct amount after fund the child account", async () => {
+                // add parent and child
+                await interFi.addParent(parentName)
+                await interFi.addChild(child1.address, givenReleaseTime, childName)
+                // fund the child
+                await interFi.fund(child1.address, { value: sendValue })
+
+                const response = await interFi.getAmount(child1.address)
+                expect(response.toString()).to.be.equal(expectedValue);
+            })
+
+            it("getAmount returns the false amount after fund the child account", async () => {
+                // add parent and child
+                await interFi.addParent(parentName)
+                await interFi.addChild(child2.address, givenReleaseTime, childName)
+
+                // fund the child
+                await interFi.fund(child1.address, { value: sendValue })
+                await interFi.fund(child2.address, { value: 1 })
+
+                const response = await interFi.getAmount(child2.address)
+                expect(response.toString()).to.not.equal(expectedValue)
+            })
         })
-     
-         it("getAmount returns the false amount after fund the child account", async () => {
-             // add parent and child
-            await interFi.addParent(parentName)
-            await interFi.addChild(child2.address, givenReleaseTime, childName)
-
-            // fund the child
-            await interFi.fund(child1.address, {value :sendValue})
-            await interFi.fund(child2.address, {value :1})
-
-            const response = await interFi.getAmount(child2.address)
-            expect(response.toString()).to.not.equal(expectedValue)
-         })
-    
-       
-    })
 
     // test for getRole
     describe("getRole", function () {
         it("getRole returns role for parent ", async () => {
-            
             // add parent 
             await interFi.addParent(parentName)
             const response = await interFi.getRole()
             expect(response).to.be.equal("Parent");
         }),
-        it("getRole returns role for child", async () => {
-            
+            it("getRole returns role for child", async () => {
 
-            await interFi.addParent(parentName)
-            await interFi.addChild(child1.address, givenReleaseTime, childName)
-            //parent = child1.address
-            const response = await interFi.connect(child1).getRole()
-            expect(response).to.be.equal("Child");
-        }),
-        it("getRole returns the role as unregistered ", async () => {
-            parent = notParent.address
-            const response = await interFi.getRole()
-            expect(response).to.be.equal("Unregistered");
-        })
-        
+                await interFi.addParent(parentName)
+                await interFi.addChild(child1.address, givenReleaseTime, childName)
+                //parent = child1.address
+                const response = await interFi.connect(child1).getRole()
+                expect(response).to.be.equal("Child");
+            }),
+            it("getRole returns the role as unregistered ", async () => {
+                const response = await interFi.connect(notParent).getRole()
+                expect(response).to.be.equal("Unregistered");
+            })
+
     })
 
     describe("getChild", function () {
@@ -267,7 +258,11 @@ describe("InterFi", function () {
             const response = await interFi.connect(child1).getChild()
             expect(response.name).to.be.equal("YY")
         })
+        it("getChild from map revert with error", async () => {
+            expect(await interFi.connect(notChild).getChild).to.be.reverted
+        })
     })
+
     describe("getParent", function () {
         beforeEach(async () => {
             await interFi.addParent(parentName)
@@ -276,47 +271,36 @@ describe("InterFi", function () {
             const response = await interFi.getParent()
             expect(response.name).to.be.equal("XX")
         })
+        it("getParent from map revert with error", async () => {
+            expect(await interFi.connect(notParent).getParent).to.be.reverted
+        })
     })
 
+    describe("getChildren", function () {
 
-    
-    describe("getChildren",function(){
         beforeEach(async () => {
             await interFi.addParent(parentName)
             await interFi.addChild(child1.address, givenReleaseTime, childName)
             await interFi.addChild(child2.address, secondReleaseTime, childName)
-            
-            
         })
-       
 
-
-        it("getChildren returns the correct array",async() => {
+        it("getChildren returns the correct array", async () => {
             const response = await interFi.getChildren([])
             expect(response).to.be.an('array').that.length(2);
             expect(response[0]).to.be.equal(child1.address)
             expect(response[1]).to.be.equal(child2.address)
 
         }),
-        it("getChildren returns the wrong array",async() => {
-            child1=notChild
-            child2 = notChild
-            const response = await interFi.getChildren([]);
-            expect(response).to.be.an('array').that.length(2)
-            expect(response[0]).to.not.equal(child1.address)
-            expect(response[1]).to.not.equal(child2.address)
 
-
-
-
-        })
-        
-    
-
+            it("getChildren returns the wrong array", async () => {
+                child1 = notChild
+                child2 = notChild
+                const response = await interFi.getChildren([]);
+                expect(response).to.be.an('array').that.length(2)
+                expect(response[0]).to.not.equal(child1.address)
+                expect(response[1]).to.not.equal(child2.address)
+            })
     })
-
-
 })
 
-   
- 
+
