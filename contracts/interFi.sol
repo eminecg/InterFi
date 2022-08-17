@@ -225,7 +225,10 @@ contract InterFi {
     {
         // check the child exist
         Child storage child = addressToChild[_child];
-        require(child.Address != address(0), "There_Is_No_Such_Child()");
+        require(
+            child.Address != address(0),
+            "There is no child with this address"
+        );
 
         if (child.amount >= _amount) {
             emit Purchase(msg.sender, 1);

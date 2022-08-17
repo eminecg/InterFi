@@ -103,20 +103,20 @@ describe("InterFi", function () {
             await interFi.fund(child1.address, { value: sendValue })
         })
 
-        it("withdraw parent succesfully", async () => {
+        it("withdrawParent succesfully", async () => {
             const response = await interFi.withdrawParent(child1.address, withdrawValue)
             expect(await interFi.getAmount(child1.address)).to.equal(withdrawValue)
         })
-        it("withdraw parent gives error due to no parent", async () => {
+        it("withdrawParent gives error due to no parent", async () => {
             parent = notParent
             const response = await interFi.withdrawParent(child1.address, withdrawValue)
             expect(response).to.be.revertedWith("There_Is_No_Such_Parent")
         })
-        it("withdraw parent gives error due to no child", async () => {
-            const response = await interFi.withdrawParent(notChild.address, 0)
-            expect(response).to.be.reverted
+        it("withdrawParent gives error due to no child", async () => {
+            const response = await interFi.withdrawParent(notChild.address, withdrawValue)
+            expect(response).to.be.revertedWith("There_is_no_child_belongs_parent")
         })
-        it("withdraw parent gives error due to not enough amount", async () => {
+        it("withdrawParent gives error due to not enough amount", async () => {
             // call fund to give amount to the child first to make sure it is not enough to withdraw
             const response = await interFi.withdrawParent(child1.address, biggerValue)
             expect(response).to.be.reverted
@@ -127,9 +127,33 @@ describe("InterFi", function () {
     describe("withdrawChild", function () {
 
         beforeEach(async () => {
+            await interFi.addParent(parentName)
+            await interFi.addChild(child1.address, givenReleaseTime, childName)
+            await interFi.addChild(child2.address, secondReleaseTime, childName)
+            await interFi.fund(child1.address, { value: sendValue })
+            await interFi.fund(child2.address, { value: sendValue })
 
         })
-    })
 
+        it("withdrawChild works succesfully", async () => {
+            const response = await interFi.withdrawChild(child2.address, withdrawValue)
+        })
+
+        it("withdrawChild revert if there is no child", async () => {
+
+            expect(await interFi.withdrawChild(notChild.address, 0))
+                .to.be.revertedWith("There is no child with this address")
+        })
+        it("withdrawChild revert if there is not enough amount", async () => {
+            const response = await interFi.withdrawChild(child1.address, biggerValue)
+            expect(response)
+                .to.be.reverted
+        })
+        it("withdrawChild revert if release time is not true", async () => {
+            const response = await interFi.withdrawChild(child1.address, biggerValue)
+            expect(response)
+                .to.be.reverted
+        })
+    })
 
 })
