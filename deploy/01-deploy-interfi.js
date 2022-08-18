@@ -8,7 +8,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
     const { deploy } = deployments;
     const { deployer } = await getNamedAccounts();
-    const verify = require("../utils/verify")
 
     if (!developmentChain.includes(network.name)) {
         interFi = await deploy("InterFi", {
@@ -18,8 +17,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
             waitConfirmations: network.config.blockConfirmations || 1
         });
         console.log("deployed at", interFi.address)
+        await verify(interFi.address, [])
     }
-
-
 }
 module.exports.tags = ["all", "InterFi"]

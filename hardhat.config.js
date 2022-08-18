@@ -23,7 +23,7 @@ module.exports = {
       url: RINKEBY_RPC_URL,
       accounts: [PRIVATE_KEY],
       chainId: 4,
-      blockConfirmations: 6
+      blockConfirmations: 4
     },
   },
   gasReporter: {
