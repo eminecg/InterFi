@@ -106,7 +106,6 @@ describe("InterFi", function () {
             await interFi.addParent(parentName)
             await interFi.addChild(child1.address, givenReleaseTime, childName)
             await interFi.fund(child1.address, { value: biggerValue })
-
         })
 
         it("withdrawParent succesfully", async () => {
@@ -115,12 +114,11 @@ describe("InterFi", function () {
         })
         it("withdrawParent gives error due to no parent", async () => {
             parent = notParent
-            const response = await interFi.withdrawParent(child1.address, withdrawValue)
-            expect(response).to.be.revertedWith("There_Is_No_Such_Parent")
+            expect(await interFi.withdrawParent(child1.address, withdrawValue)).to.be.revertedWith("There_Is_No_Such_Parent")
         })
         it("withdrawParent gives error due to no child", async () => {
-            const response = await interFi.withdrawParent(notChild.address, withdrawValue)
-            expect(response).to.be.revertedWith("This_child_is_not_belongs_parent")
+            await expect(interFi.withdrawParent(notChild.address, withdrawValue))
+                .revertedWith("This_child_is_not_belongs_parent")
         })
         it("withdrawParent gives error due to not enough amount", async () => {
             // call fund to give amount to the child first to make sure it is not enough to withdraw
@@ -146,8 +144,7 @@ describe("InterFi", function () {
         })
 
         it("withdrawChild revert if there is no child", async () => {
-
-            expect(await interFi.withdrawChild(notChild.address, 0))
+            await expect(interFi.withdrawChild(notChild.address, 0))
                 .to.be.revertedWith("There is no child with this address")
         })
         it("withdrawChild revert if there is not enough amount", async () => {
@@ -162,12 +159,11 @@ describe("InterFi", function () {
         })
     })
 
-
-
     describe("getOwner", function () {
+
         it("getOwner returns the correct address", async () => {
             const response = await interFi.getOwner()
-            expect(response).to.be.equal(parent.address);
+            await expect(response).to.be.equal(parent.address);
         }),
             it("getOwner returns the wrong address when calling from other account", async () => {
                 const response = await interFi.connect(notParent).getOwner

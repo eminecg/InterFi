@@ -199,12 +199,13 @@ contract InterFi {
         console.log("-------------------------------");
         console.log(msg.sender);
         console.log(addressToChild[_child].invester);
-        Child storage child = addressToChild[_child];
+
         require(
             addressToChild[_child].invester == payable(msg.sender),
             "This_child_is_not_belongs_parent"
         );
         // get child
+        Child storage child = addressToChild[_child];
 
         emit Purchase(msg.sender, 1);
         if (child.amount < _amount) {
