@@ -105,7 +105,8 @@ describe("InterFi", function () {
         beforeEach(async () => {
             await interFi.addParent(parentName)
             await interFi.addChild(child1.address, givenReleaseTime, childName)
-            await interFi.fund(child1.address, { value: sendValue })
+            await interFi.fund(child1.address, { value: biggerValue })
+
         })
 
         it("withdrawParent succesfully", async () => {
@@ -119,7 +120,7 @@ describe("InterFi", function () {
         })
         it("withdrawParent gives error due to no child", async () => {
             const response = await interFi.withdrawParent(notChild.address, withdrawValue)
-            expect(response).to.be.revertedWith("There_is_no_child_belongs_parent")
+            expect(response).to.be.revertedWith("This_child_is_not_belongs_parent")
         })
         it("withdrawParent gives error due to not enough amount", async () => {
             // call fund to give amount to the child first to make sure it is not enough to withdraw

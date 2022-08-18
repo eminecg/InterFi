@@ -1,16 +1,18 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-deploy");
-require("dotenv").config();
+require("dotenv").config()
 
 const RINKEBY_RPC_URL = process.env.RINKEBY_RPC_URL || "https://eth-rinkeby"
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "0xkey";
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "key";
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || "key";
+
+
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   defaultNetwork: "hardhat",
   solidity: {
-    compilers: [{ version: "0.8.9" }],
+    compilers: [{ version: "0.8.9" }, { version: "0.6.6" }],
   },
   networks: {
     hardhat: {
@@ -44,4 +46,3 @@ module.exports = {
     }
   }
 };
-

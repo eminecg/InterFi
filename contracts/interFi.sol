@@ -196,25 +196,22 @@ contract InterFi {
         Parent storage parent = addressToParent[msg.sender];
         require(parent.Address != address(0), "There_Is_No_Such_Parent");
 
-        // check this child belongs to this parent
-        uint256 size = parent.children.length;
-        bool index = false;
-        for (uint256 i = 0; i < size; i++) {
-            if (parent.children[i] == _child) {
-                index = true;
-            }
+        console.log("-------------------------------");
+        console.log(msg.sender);
+        console.log(addressToChild[_child].invester);
+        Child storage child = addressToChild[_child];
+        require(
+            addressToChild[_child].invester == payable(msg.sender),
+            "This_child_is_not_belongs_parent"
+        );
+        // get child
+
+        emit Purchase(msg.sender, 1);
+        if (child.amount < _amount) {
+            revert Not_Enough_Funds();
         }
-        if (index) {
-            Child storage child = addressToChild[_child];
-            emit Purchase(msg.sender, 1);
-            if (child.amount < _amount) {
-                revert Not_Enough_Funds();
-            }
-            child.amount -= _amount;
-            payable(msg.sender).transfer(_amount); // send the amount of value to the parent address
-        } else {
-            revert There_is_no_child_belongs_parent();
-        }
+        child.amount -= _amount;
+        payable(msg.sender).transfer(_amount); // send the amount of value to the parent address
     }
 
     //  child can get amount of coin from his/her balance, msg.sender has to be child
