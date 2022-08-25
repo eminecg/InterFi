@@ -176,8 +176,7 @@ describe("InterFi", function () {
     describe("getBalance", function () {
         it("getBalance returns the correct balance", async () => {     // aslında hatalı bigInt (00x)dönüyor     // not working well 
             const response = await interFi.getBalance()
-            console.log("getBalance response: ")
-            console.log(response);
+
             expect(response.toString()).to.be.equal(initalBalance);
         }),
             // should stop on modifier when calling from other account
@@ -298,6 +297,51 @@ describe("InterFi", function () {
                 expect(response[1]).to.not.equal(child2.address)
             })
     })
+
+        // test  for getChildrenList
+        describe("getChildrenList", function () {
+            beforeEach(async () => {
+                await interFi.addParent(parentName)
+                await interFi.addChild(child1.address, givenReleaseTime, childName)
+                await interFi.addChild(child2.address, secondReleaseTime, childName)
+            }),
+                it("getChildrenList returns the correct array", async () => {
+                    const response = await interFi.getChildrenList([])
+                    expect(response).to.be.an('array').that.length(2);
+                    
+
+                    expect(response[0].Address).to.be.equal(child1.address)
+                    expect(response[1].Address).to.be.equal(child2.address)
+    
+                }),
+                it("getChildrenList returns the wrong array", async () => {
+                    child1 = notChild
+                    child2 = notChild
+                    const response = await interFi.getChildrenList([]);
+                    expect(response).to.be.an('array').that.length(2)
+                    expect(response[0]).to.not.equal(child1.address)
+                    expect(response[1]).to.not.equal(child2.address)
+                })
+        }) 
+
+        // test for the getRelaseTime
+        describe("getReleaseTime", function () {
+            beforeEach(async () => {
+                await interFi.addParent(parentName)
+                await interFi.addChild(child1.address, givenReleaseTime, childName)
+                await interFi.addChild(child2.address, secondReleaseTime, childName)
+            }),
+                it("getReleaseTime returns the correct time", async () => {
+                    const response = await interFi.getReleaseTime(child1.address)
+                    expect(response.toString()).to.be.equal(givenReleaseTime.toString())
+                }),
+                it("getReleaseTime returns the wrong time", async () => {
+                    const response = await interFi.getReleaseTime(child2.address)
+                    expect(response.toString()).to.not.equal(givenReleaseTime.toString())
+                })
+        })
+
+
 })
 
 
