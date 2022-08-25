@@ -171,7 +171,11 @@ contract InterFi {
     }
 
     
-
+    // getReleaseTime of child
+    function getReleaseTime(address payable _child) public view returns (uint256) {
+        Child storage child = addressToChild[_child];
+        return child.releaseTime;
+    }
     
 
     // get amount of ether from child balance , send to the msg.sender wallet
