@@ -163,12 +163,14 @@ contract InterFi {
 
     function getChildrenList ()  external view returns (Child[] memory result ) {
          Parent storage parent = addressToParent[msg.sender];
-         require(parent.Address != msg.sender, "There_Is_No_Such_Parent");
+         require(parent.Address == msg.sender, "There_Is_No_Such_Parent");
          result = new Child[](parent.children.length);
             for (uint i = 0; i < parent.children.length; i++) {
                 result[i] = addressToChild[parent.children[i]];
             }
     }
+
+    
 
     
 
