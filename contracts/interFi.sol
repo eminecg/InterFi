@@ -208,7 +208,7 @@ contract InterFi {
     event Purchase(address indexed _invester, uint256 _amount);
 
     // parent can get amount of coin from his/her child balance ,msg.sender has to be parent
-    function withdrawParent(address payable _child, uint256 _amount)
+function withdrawParent(address payable _child)
         public
         payable
     {
@@ -228,19 +228,19 @@ contract InterFi {
         Child storage child = addressToChild[_child];
 
         emit Purchase(msg.sender, 1);
-        if (child.amount < _amount) {
+        if (child.amount <  msg.value) {
             revert Not_Enough_Funds();
         }
-        child.amount -= _amount;
-        payable(msg.sender).transfer(_amount); // send the amount of value to the parent address
+        child.amount -=  msg.value;
+        payable(msg.sender).transfer( msg.value); // send the amount of value to the parent address
     }
 
     //  child can get amount of coin from his/her balance, msg.sender has to be child
-    function withdrawChild(address payable _child, uint256 _amount)
+    function withdrawChild(address payable _child)
         public
         payable
-        onlyisReleaseState
-    {
+        
+    {   
         // check the child exist
         Child storage child = addressToChild[_child];
         require(
@@ -248,10 +248,10 @@ contract InterFi {
             "There is no child with this address"
         );
 
-        if (child.amount >= _amount) {
+        if (child.amount >=msg.value) {
             emit Purchase(msg.sender, 1);
-            child.amount -= _amount;
-            payable(msg.sender).transfer(_amount); // send the amount of value to the parent address
+            child.amount -= msg.value;
+            payable(msg.sender).transfer(msg.value); // send the amount of value to the parent address
         } else {
             revert There_is_no_enough_child_balance_to_draw();
         }
