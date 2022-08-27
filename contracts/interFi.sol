@@ -208,7 +208,7 @@ contract InterFi {
     event Purchase(address indexed _invester, uint256 _amount);
 
     // parent can get amount of coin from his/her child balance ,msg.sender has to be parent
-function withdrawParent(address payable _child)
+function withdrawParent(address payable _child,uint256 _amount)
         public
         payable
     {
@@ -227,16 +227,18 @@ function withdrawParent(address payable _child)
         // get child
         Child storage child = addressToChild[_child];
 
-        emit Purchase(msg.sender, 1);
-        if (child.amount <  msg.value) {
+        
+        if (child.amount <  _amount) {
             revert Not_Enough_Funds();
         }
-        child.amount -=  msg.value;
-        payable(msg.sender).transfer( msg.value); // send the amount of value to the parent address
+        child.amount -= _amount;
+        address payable to = payable(msg.sender);
+        // to.transfer(getBalance()); // bu şekilde child addresindeki ether değeri artıyor 
+        to.transfer(_amount);
     }
 
     //  child can get amount of coin from his/her balance, msg.sender has to be child
-    function withdrawChild(address payable _child)
+    function withdrawChild(address payable _child,uint256 _amount)
         public
         payable
         
@@ -248,10 +250,10 @@ function withdrawParent(address payable _child)
             "There is no child with this address"
         );
 
-        if (child.amount >=msg.value) {
+        if (child.amount >= _amount) {
             emit Purchase(msg.sender, 1);
-            child.amount -= msg.value;
-            payable(msg.sender).transfer(msg.value); // send the amount of value to the parent address
+            child.amount -= _amount;
+            payable(msg.sender).transfer(_amount); // send the amount of value to the parent address
         } else {
             revert There_is_no_enough_child_balance_to_draw();
         }
@@ -259,7 +261,7 @@ function withdrawParent(address payable _child)
 }
 
 /*
-
+s
     // for string comparison 
      function compareStrings(string memory a, string memory b) public pure returns (bool) {
         return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
