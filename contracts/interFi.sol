@@ -258,6 +258,17 @@ function withdrawParent(address payable _child,uint256 _amount)
             revert There_is_no_enough_child_balance_to_draw();
         }
     }
+
+    function sumChildren() public view returns (uint256) {
+    Parent storage parent = addressToParent[msg.sender];
+    require(parent.Address != address(0), "There_Is_No_Such_Parent");
+    uint256 sum = 0;
+    uint256 size = parent.children.length;
+    for (uint256 i = 0; i < size; i++) {
+        sum += addressToChild[parent.children[i]].amount;
+    }
+    return sum;
+    }
 }
 
 /*
