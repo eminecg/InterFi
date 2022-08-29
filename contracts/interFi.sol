@@ -238,13 +238,13 @@ function withdrawParent(address payable _child,uint256 _amount)
     }
 
     //  child can get amount of coin from his/her balance, msg.sender has to be child
-    function withdrawChild(address payable _child,uint256 _amount)
+    function withdrawChild(uint256 _amount)
         public
         payable
         
     {   
         // check the child exist
-        Child storage child = addressToChild[_child];
+        Child storage child = addressToChild[msg.sender];
         require(
             child.Address != address(0),
             "There is no child with this address"
