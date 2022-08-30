@@ -6,12 +6,12 @@ import "hardhat/console.sol";
 /*
 0x0000000000000000000000000000000000000000
  parent 
-0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB
+0x5c6B0f7Bf3E7ce046039Bd8FABdfD3f9F5021678
   child 1
-0x617F2E2fD72FD9D5503197092aC168c91465E7f2, 1723720445 ,X
-0x617F2E2fD72FD9D5503197092aC168c91465E7f2
+0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db, 1598806220000 ,X
+0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db
   child 2
-0x17F6AD8Ef982297579C203069C1DbfFE4348c372, 1723720445 ,Y
+0x17F6AD8Ef982297579C203069C1DbfFE4348c372, 1693414220000 ,Y
 0x17F6AD8Ef982297579C203069C1DbfFE4348c372
 0x5c6B0f7Bf3E7ce046039Bd8FABdfD3f9F5021678
 */
@@ -91,12 +91,12 @@ contract InterFi {
     }
 
     function ageCalc(address payable _child) public view returns (bool) {
-        console.log(block.timestamp);
+        console.log(block.timestamp*1000);
         Child storage child = addressToChild[_child];
         uint256 releaseTime = child.releaseTime;
         console.log(releaseTime);
 
-        if (block.timestamp > releaseTime) {
+        if ((block.timestamp*1000) > releaseTime) {
             return true;
         } else {
             return false;
@@ -242,7 +242,7 @@ function withdrawParent(address payable _child,uint256 _amount)
         public
         payable
         
-    {   
+    onlyisReleaseState {   
         // check the child exist
         Child storage child = addressToChild[msg.sender];
         require(
