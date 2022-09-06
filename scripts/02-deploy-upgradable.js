@@ -5,7 +5,7 @@ async function main() {
     console.log('Deploying InterFi...');
     const interfi = await upgrades.deployProxy(InterFi, [], { initializer: 'initialize' });
     await interfi.deployed();
-    console.log('İnterFi deployed to:', InterFi.address);
+    console.log('İnterFi deployed to:', interfi.address);
 }
 
 main();
