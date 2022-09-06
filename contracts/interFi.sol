@@ -3,6 +3,7 @@ pragma solidity ^0.8.9;
 
 // Import this file to use console.log
 import "hardhat/console.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 /*
 0x0000000000000000000000000000000000000000
  parent 
@@ -24,7 +25,7 @@ error Not_released_yet();
 error There_is_no_user();
 error Not_Enough_Funds();
 
-contract InterFi {
+contract InterFi is Initializable {
     address private owner;
 
     struct Parent {
@@ -49,7 +50,7 @@ contract InterFi {
         owner = msg.sender;
     }
 
-    modifier onlyOwner() {        
+    modifier onlyOwner() {
         if (msg.sender != owner) {
             revert NotOwner();
         }
@@ -91,12 +92,12 @@ contract InterFi {
     }
 
     function ageCalc(address payable _child) public view returns (bool) {
-        console.log(block.timestamp*1000);
+        console.log(block.timestamp * 1000);
         Child storage child = addressToChild[_child];
         uint256 releaseTime = child.releaseTime;
         console.log(releaseTime);
 
-        if ((block.timestamp*1000) > releaseTime) {
+        if ((block.timestamp * 1000) > releaseTime) {
             return true;
         } else {
             return false;
@@ -138,7 +139,6 @@ contract InterFi {
         }
     }
 
-
     // get parent struct
     function getParent() public view returns (Parent memory) {
         Parent storage parent = addressToParent[msg.sender];
@@ -148,8 +148,6 @@ contract InterFi {
             revert There_is_no_user();
         }
     }
-
-
 
     // get child struct
     function getChild() public view returns (Child memory) {
@@ -161,22 +159,24 @@ contract InterFi {
         }
     }
 
-    function getChildrenList ()  external view returns (Child[] memory result ) {
-         Parent storage parent = addressToParent[msg.sender];
-         require(parent.Address == msg.sender, "There_Is_No_Such_Parent");
-         result = new Child[](parent.children.length);
-            for (uint i = 0; i < parent.children.length; i++) {
-                result[i] = addressToChild[parent.children[i]];
-            }
+    function getChildrenList() external view returns (Child[] memory result) {
+        Parent storage parent = addressToParent[msg.sender];
+        require(parent.Address == msg.sender, "There_Is_No_Such_Parent");
+        result = new Child[](parent.children.length);
+        for (uint256 i = 0; i < parent.children.length; i++) {
+            result[i] = addressToChild[parent.children[i]];
+        }
     }
 
-    
     // getReleaseTime of child
-    function getReleaseTime(address payable _child) public view returns (uint256) {
+    function getReleaseTime(address payable _child)
+        public
+        view
+        returns (uint256)
+    {
         Child storage child = addressToChild[_child];
         return child.releaseTime;
     }
-    
 
     // get amount of ether from child balance , send to the msg.sender wallet
     function fund(address payable _child) public payable {
@@ -208,7 +208,7 @@ contract InterFi {
     event Purchase(address indexed _invester, uint256 _amount);
 
     // parent can get amount of coin from his/her child balance ,msg.sender has to be parent
-function withdrawParent(address payable _child,uint256 _amount)
+    function withdrawParent(address payable _child, uint256 _amount)
         public
         payable
     {
@@ -227,22 +227,17 @@ function withdrawParent(address payable _child,uint256 _amount)
         // get child
         Child storage child = addressToChild[_child];
 
-        
-        if (child.amount <  _amount) {
+        if (child.amount < _amount) {
             revert Not_Enough_Funds();
         }
         child.amount -= _amount;
         address payable to = payable(msg.sender);
-        // to.transfer(getBalance()); // bu şekilde child addresindeki ether değeri artıyor 
+        // to.transfer(getBalance()); // bu şekilde child addresindeki ether değeri artıyor
         to.transfer(_amount);
     }
 
     //  child can get amount of coin from his/her balance, msg.sender has to be child
-    function withdrawChild(uint256 _amount)
-        public
-        payable
-        
-    onlyisReleaseState {   
+    function withdrawChild(uint256 _amount) public payable onlyisReleaseState {
         // check the child exist
         Child storage child = addressToChild[msg.sender];
         require(
@@ -260,14 +255,14 @@ function withdrawParent(address payable _child,uint256 _amount)
     }
 
     function sumChildren() public view returns (uint256) {
-    Parent storage parent = addressToParent[msg.sender];
-    require(parent.Address != address(0), "There_Is_No_Such_Parent");
-    uint256 sum = 0;
-    uint256 size = parent.children.length;
-    for (uint256 i = 0; i < size; i++) {
-        sum += addressToChild[parent.children[i]].amount;
-    }
-    return sum;
+        Parent storage parent = addressToParent[msg.sender];
+        require(parent.Address != address(0), "There_Is_No_Such_Parent");
+        uint256 sum = 0;
+        uint256 size = parent.children.length;
+        for (uint256 i = 0; i < size; i++) {
+            sum += addressToChild[parent.children[i]].amount;
+        }
+        return sum;
     }
 }
 
