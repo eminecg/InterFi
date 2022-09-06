@@ -26,7 +26,7 @@ error Not_released_yet();
 error There_is_no_user();
 error Not_Enough_Funds();
 
-contract InterFi is Initializable {
+contract InterFiV2 is Initializable {
     address private owner;
 
     struct Parent {
@@ -105,10 +105,9 @@ contract InterFi is Initializable {
         }
     }
 
-    // Getter Functions
-    // function getOwner() public view returns (address) {
-    //     return owner;
-    // }
+    function getOwner() public view returns (address) {
+        return owner;
+    }
 
     // returns total balance of contract
     function getBalance() public view onlyOwner returns (uint256) {

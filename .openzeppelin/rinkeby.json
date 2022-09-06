@@ -1,0 +1,505 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0x1F70b3c2A0fbAD6D5d47b46D98264abc7307d633",
+    "txHash": "0xa24a762b35a11d029751b9a2561537d2b86fedf0f51ab6af869a63cda645468a"
+  },
+  "proxies": [
+    {
+      "address": "0x56435887447867F86490902DB8AA3FcC10E3a4dc",
+      "txHash": "0x450c82af28866ca1bbebf64491b518af7d740f1500ac6351365173a53b81145b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x29FFDC58FA758f8961B5A50F9A774B4495002Ae9",
+      "txHash": "0x903fc40a5e216a373cb8dd4072b5bb77a7a2ae3020f52f9903fc6c38062499d9",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xaa74d7171087Fb76E08e00649FCFE714a2177B85",
+      "txHash": "0xe355dbffa78ab368d68d9b1b0bd4d351513bdba5879b5e0a8abdc463671e61e4",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xa077a6F26488c35E6d117AE898C4B1aE54755b1f",
+      "txHash": "0x4f5f42217c99cdc6d514930dcb640cb1373f306bc8d5c0b6b7461c742c1dd23f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x78FBaAaa1065D46444843d642c7Fdd8ec74D5eF1",
+      "txHash": "0x02b30de672ce783ddd1678830df15ca6e88da43be0ae22b6dee341a06ca2ffdd",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x8cF74F0f8b7CE70A799E04AEA77fB8170c67531B",
+      "txHash": "0x25754363772bfc0a998ccc5d531023b9ee7bca13eb70b4676ff606bfca21dc28",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x3F23be8eDB27dE73dFcE0e3c0D266B806692F3df",
+      "txHash": "0x4e777c5cbb9a841069ea5f391947fd709df3e0426d5641e6cba99674889205d3",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "076df8b4b4ba567f28377c3358463f7ae179514dfaf71338ce538eeb5fe2f336": {
+      "address": "0x97579461CCa8005c901A0848D8f16B75c113E9fC",
+      "txHash": "0xef2d2ab12b4f42e47311110bdd58cd4424464b8266a689636d4ad51042f25e1b",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "owner",
+            "offset": 2,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "InterFi",
+            "src": "contracts/interFi.sol:30"
+          },
+          {
+            "label": "addressToChild",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_mapping(t_address,t_struct(Child)436_storage)",
+            "contract": "InterFi",
+            "src": "contracts/interFi.sol:47"
+          },
+          {
+            "label": "addressToParent",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_address,t_struct(Parent)423_storage)",
+            "contract": "InterFi",
+            "src": "contracts/interFi.sol:48"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_address_payable": {
+            "label": "address payable",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_struct(Child)436_storage)": {
+            "label": "mapping(address => struct InterFi.Child)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(Parent)423_storage)": {
+            "label": "mapping(address => struct InterFi.Parent)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Child)436_storage": {
+            "label": "struct InterFi.Child",
+            "members": [
+              {
+                "label": "Address",
+                "type": "t_address_payable",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "invester",
+                "type": "t_address_payable",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "releaseTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "isReleasable",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "5"
+              }
+            ],
+            "numberOfBytes": "192"
+          },
+          "t_struct(Parent)423_storage": {
+            "label": "struct InterFi.Parent",
+            "members": [
+              {
+                "label": "Address",
+                "type": "t_address_payable",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "children",
+                "type": "t_array(t_address)dyn_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "03b557158e30751989d29151f916a69c08f02bb9188ab36118d56c8072b529cb": {
+      "address": "0x8673c44d6130e136F75271F14Dddaf50302635A9",
+      "txHash": "0x2b0a7d1095e865701eb621f9be5521bd1f712e5053e6afe053f41991b16230b2",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "owner",
+            "offset": 2,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "InterFi",
+            "src": "contracts/interFi.sol:30"
+          },
+          {
+            "label": "addressToChild",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_mapping(t_address,t_struct(Child)436_storage)",
+            "contract": "InterFi",
+            "src": "contracts/interFi.sol:47"
+          },
+          {
+            "label": "addressToParent",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_address,t_struct(Parent)423_storage)",
+            "contract": "InterFi",
+            "src": "contracts/interFi.sol:48"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_address_payable": {
+            "label": "address payable",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_struct(Child)436_storage)": {
+            "label": "mapping(address => struct InterFi.Child)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(Parent)423_storage)": {
+            "label": "mapping(address => struct InterFi.Parent)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Child)436_storage": {
+            "label": "struct InterFi.Child",
+            "members": [
+              {
+                "label": "Address",
+                "type": "t_address_payable",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "invester",
+                "type": "t_address_payable",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "releaseTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "isReleasable",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "5"
+              }
+            ],
+            "numberOfBytes": "192"
+          },
+          "t_struct(Parent)423_storage": {
+            "label": "struct InterFi.Parent",
+            "members": [
+              {
+                "label": "Address",
+                "type": "t_address_payable",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "children",
+                "type": "t_array(t_address)dyn_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "bf7cc0b748bcf46b91d594bce75cd943acd840164e4c453f943b49ecddf26fc8": {
+      "address": "0xB602cb61A2373B1df7034de3296dd070cb570993",
+      "txHash": "0x5233bf0042de2f586fbf8bbd0f4158e7a00a7141d6cf22c2a9ee2e39e2a436ab",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "owner",
+            "offset": 2,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "InterFiV2",
+            "src": "contracts/interFiv2.sol:30"
+          },
+          {
+            "label": "addressToChild",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_mapping(t_address,t_struct(Child)436_storage)",
+            "contract": "InterFiV2",
+            "src": "contracts/interFiv2.sol:47"
+          },
+          {
+            "label": "addressToParent",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_address,t_struct(Parent)423_storage)",
+            "contract": "InterFiV2",
+            "src": "contracts/interFiv2.sol:48"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_address_payable": {
+            "label": "address payable",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_struct(Child)436_storage)": {
+            "label": "mapping(address => struct InterFiV2.Child)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(Parent)423_storage)": {
+            "label": "mapping(address => struct InterFiV2.Parent)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Child)436_storage": {
+            "label": "struct InterFiV2.Child",
+            "members": [
+              {
+                "label": "Address",
+                "type": "t_address_payable",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "invester",
+                "type": "t_address_payable",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "releaseTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "isReleasable",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "5"
+              }
+            ],
+            "numberOfBytes": "192"
+          },
+          "t_struct(Parent)423_storage": {
+            "label": "struct InterFiV2.Parent",
+            "members": [
+              {
+                "label": "Address",
+                "type": "t_address_payable",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "children",
+                "type": "t_array(t_address)dyn_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}

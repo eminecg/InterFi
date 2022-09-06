@@ -1,6 +1,7 @@
 const { network } = require("hardhat");
 const { internalTask } = require("hardhat/config");
 const { developmentChain } = require("../helper-hardhat-config");
+const { ethers, upgrades } = require('hardhat');
 const { verify } = require("../utils/verify")
 require("dotenv").config();
 
@@ -10,6 +11,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deployer } = await getNamedAccounts();
 
     if (!developmentChain.includes(network.name)) {
+
         interFi = await deploy("InterFi", {
             from: deployer,
             args: [],
