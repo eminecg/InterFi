@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
  parent 
 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2
   child 1
-0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db, 1598806220000 ,X
+0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2, 1598806220000 ,X
 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db
   child 2
 0x17F6AD8Ef982297579C203069C1DbfFE4348c372, 1693414220000 ,Y
@@ -256,18 +256,15 @@ contract InterFi is ERC20{
            
 
 
-            // approve token to the child
-            approve(_child,msg.value);
+           //_transfer(msg.sender,address(this), msg.value);
+           increaseAllowance(_child, msg.value);
 
-            uint256 a=allowance( msg.sender,_child);
-            console.log(a);
-            uint256 b=allowance( _child,msg.sender);
-            console.log(b);
-            // transfer to contract from parent
-            transferFrom( msg.sender,address(this), 1000000000000000000 );
             // get remain token on contract
              uint256 remainToken = balanceOf(msg.sender);
-            console.log("remain token on contract : ", remainToken);
+            console.log("remain token on parent : ", remainToken);
+
+            uint256 allowance = allowance(msg.sender, _child);
+            console.log("allowance token on child : ", allowance);
 
            // transfer(_child, msg.value);
 
@@ -314,15 +311,15 @@ contract InterFi is ERC20{
             revert Not_Enough_Funds();
         }
         child.amount -= _amount;
-        address payable to = payable(msg.sender);
-        // to.transfer(getBalance()); // bu şekilde child addresindeki ether değeri artıyor 
        
-       // to.transfer(_amount);
                         
-        transfer(msg.sender, _amount);
+       // _transfer(address(this),msg.sender, _amount);
+       decreaseAllowance(_child, _amount);
+       uint256 allowance = allowance(msg.sender, _child);
+       console.log("allowance token on child : ", allowance);
 
         // get remain token on contract
-         uint256 remainToken = balanceOf(address(this));
+        uint256 remainToken = balanceOf(address(this));
         console.log("remain token on contract : ", remainToken);
 
 
@@ -345,7 +342,11 @@ contract InterFi is ERC20{
         if (child.amount >= _amount) {
             emit Purchase(msg.sender, 1);
             child.amount -= _amount;
-            payable(msg.sender).transfer(_amount); // send the amount of value to the parent address
+           
+            //payable(msg.sender).transfer(_amount); // send the amount of value to the parent address
+            //transefer token from contract to child address 
+            _transfer(child.invester,msg.sender, _amount);
+
         } else {
             revert There_is_no_enough_child_balance_to_draw();
         }
