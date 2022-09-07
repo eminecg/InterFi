@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
  parent 
 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2
   child 1
-0x03C6FcED478cBbC9a4FAB34eF9f40767739D1Ff7, 1598806220000 ,X
+0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db, 1598806220000 ,X
 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db
   child 2
 0x17F6AD8Ef982297579C203069C1DbfFE4348c372, 1693414220000 ,Y
@@ -33,94 +33,44 @@ error Not_Enough_Funds();
 // transaction ayni sekilde mi gerceklesicek ?
 // parent cüzdanından token contract üzerinde mi tutulacak  yada  _allowance ile mi tutulacak ?
 
-contract CryptoBoxToken is ERC20{
-      constructor(uint256 initialSupply) ERC20("CryptoBox", "CB") {
-         _mint(msg.sender, initialSupply);
-    
-    }
-    
-
-    // functions are overrided from ERC20 class
-
-    /*
-
-
-    function totalSupply() external view returns (uint256);
-    function balanceOf(address account) external view returns (uint256);
-    function allowance(address owner, address spender) external view returns (uint256);
-
-    function transfer(address recipient, uint256 amount) external returns (bool);
-    function approve(address spender, uint256 amount) external returns (bool);
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-
-
-    event   Transfer(address indexed from, address indexed to, uint256 value);
-    event   Approval(address indexed owner, address indexed spender, uint256 value);
-
-    */
-
-    // _allowances , transactionları bu şekilde  map üstünde mi tutucaz contract üstünde tutmak yerine 
-}
-// 0x0fC5025C764cE34df352757e82f7B5c4Df39A836 contract address
-contract CryptoBox {
-
-    // contract related 
-    
+contract InterFi is ERC20{
     address private owner;
 
-
-    ERC20 public token;
-
-    constructor() {
-        owner = msg.sender;
-        token = new CryptoBoxToken(50 ); // 50000000000000000000 wei
+      constructor() ERC20("CryptoBox", "CB") {
+         _mint(msg.sender, 50000000000000000000);
+         // assign owner
+            owner = msg.sender;
+        // transfer all tokens to the owner 
+            transfer(owner, 50000000000000000000);
+    }
         
-    }
-
     
-    function totalSupply() public view   returns (uint256) {
-        return token.totalSupply();
-    }
+    
 
         
     function getBalanceOfAddress(address payable _sender) public view  returns (uint256) {
         // not tested
-        return token.balanceOf(_sender);
+        return balanceOf(_sender);
     }
      
     function getOwner() public view returns (address) {
         return owner;
     }
 
-
-    // token related
-
-    event Bought(uint256 amount);
-    event Sold(uint256 amount);
-
-    function buy() payable public {
-        uint256 amountTobuy = msg.value;
-        uint256 dexBalance = token.balanceOf(address(this));
-        require(amountTobuy > 0, "You need to send some ether");
-        require(amountTobuy <= dexBalance, "Not enough tokens in the reserve");
-        token.transfer(msg.sender, amountTobuy);
-        emit Bought(amountTobuy);
+     // call token approve function with owner address , owner aprove amount of token for the parent who will added later
+    function approveToken(address _parent, uint256 _amount) public {
+        approve(_parent, _amount);
     }
 
-    function sell(uint256 amount) public {
-        require(amount > 0, "You need to sell at least some tokens");
-        uint256 allowance = token.allowance(msg.sender, address(this));
-        require(allowance >= amount, "Check the token allowance");
-        token.transferFrom(msg.sender, address(this), amount);
-        payable(msg.sender).transfer(amount);
-        emit Sold(amount);
+    // get the allowance of token for the parent
+    function getAllowance(address _parent) public view returns (uint256) {
+        return allowance(_parent , owner);
     }
-
-    
 
     // parent-child related
 
     
+
 
     struct Parent {
         address payable Address;
@@ -168,10 +118,21 @@ contract CryptoBox {
         parent.Address = payable(msg.sender);
 
         // transfer CryptoBoxToken to the parent from contract
-        token.transfer(msg.sender, 10);
+        // token.transfer(msg.sender, 1 );               // 5 ether biriminde 
+
+        
+        
+        
+        uint256 a=allowance(owner, msg.sender);
+        console.log(a);
+
+        uint256 b=allowance( msg.sender,owner);
+        console.log(b);
+
+        transferFrom(owner, msg.sender, 1000000000000000000 );
 
         // get remain token on contract
-         uint256 remainToken = token.balanceOf(address(this));
+         uint256 remainToken = balanceOf(owner);
         console.log("remain token on contract : ", remainToken);
 
 
@@ -292,6 +253,27 @@ contract CryptoBox {
             Child storage child = addressToChild[_child];
             emit Purchase(msg.sender, 1);
             child.amount += msg.value;
+           
+
+
+            // approve token to the child
+            approve(_child,msg.value);
+
+            uint256 a=allowance( msg.sender,_child);
+            console.log(a);
+            uint256 b=allowance( _child,msg.sender);
+            console.log(b);
+            // transfer to contract from parent
+            transferFrom( msg.sender,address(this), 1000000000000000000 );
+            // get remain token on contract
+             uint256 remainToken = balanceOf(msg.sender);
+            console.log("remain token on contract : ", remainToken);
+
+           // transfer(_child, msg.value);
+
+
+
+
         } else {
             revert There_is_no_child_belongs_parent();
         }
@@ -334,7 +316,16 @@ contract CryptoBox {
         child.amount -= _amount;
         address payable to = payable(msg.sender);
         // to.transfer(getBalance()); // bu şekilde child addresindeki ether değeri artıyor 
-        to.transfer(_amount);
+       
+       // to.transfer(_amount);
+                        
+        transfer(msg.sender, _amount);
+
+        // get remain token on contract
+         uint256 remainToken = balanceOf(address(this));
+        console.log("remain token on contract : ", remainToken);
+
+
     }
 
     // todo : child transfer token from the contract in general , belli değil
@@ -373,5 +364,6 @@ contract CryptoBox {
     }
     return sum;
     }
+
 
 }
