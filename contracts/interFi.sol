@@ -26,6 +26,8 @@ error Role_is_not_valid();
 error Not_released_yet();
 error There_is_no_user();
 error Not_Enough_Funds();
+error Description_is_not_unique();
+
 
 // TODO: 1. assign each created parent amount of CryptoBoxToken until reached 100. parent , then parent has to buy token with cost of bla bla ?? determine cost of token
 // TODO: 2. each transaction request has its own release time , if release time is not passed , transaction will not be executed (?) 
@@ -111,6 +113,22 @@ contract InterFi is ERC20{
         _;
     }
 
+    // a middleware for checking description of transaction is unique or not
+    modifier onlyUniqueDescription(string memory _description) {
+        bool state = checkDescription(payable(msg.sender),_description);
+        if (state == true) {
+            revert Description_is_not_unique();
+        }
+        _;
+    }
+    
+    // function for checing description is unique or not between addressTransaction map value 
+    function checkDescription(address payable _address, string memory _description) public view returns (bool) {
+        if (addressToTransaction[_address][_description].amount == 0) {
+            return false;
+        }
+        return true;
+    }
 
     // todo:  add token to the each parent address until 100. parent
     function addParent(string memory _name) public {
@@ -238,7 +256,7 @@ contract InterFi is ERC20{
         return releaseTime;
     }
         
-    function fund(address payable _child,uint256 _releaseTime,string memory uniqueDescription) public payable {
+    function fund(address payable _child,uint256 _releaseTime,string memory uniqueDescription) public payable onlyUniqueDescription (uniqueDescription) {
         
         Parent storage parent = addressToParent[msg.sender];
         require(parent.Address != address(0), "There_Is_No_Such_Parent");
@@ -259,7 +277,16 @@ contract InterFi is ERC20{
             //_transfer(msg.sender,address(this), msg.value);
             increaseAllowance(_child, msg.value);
            
-            addressToTransaction[_child][uniqueDescription] = transaction(msg.value,_releaseTime,false);    
+            // first check the description is exist or not
+            bool state = checkDescription(_child,uniqueDescription);
+            if (state == false) {
+                // increase existence transaction amount
+                addressToTransaction[_child][uniqueDescription].amount += msg.value;
+            } else {
+                // create new transaction
+                addressToTransaction[_child][uniqueDescription] = transaction(msg.value,_releaseTime,false);    
+            } 
+            
         
             
              uint256 remainToken = balanceOf(msg.sender);
