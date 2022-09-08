@@ -11,10 +11,10 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
  parent 
 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2
   child 1
-0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2, 1598806220000 ,X
+0x5c6B0f7Bf3E7ce046039Bd8FABdfD3f9F5021678, 1598806220000 ,X
 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db
   child 2
-0x17F6AD8Ef982297579C203069C1DbfFE4348c372, 1693414220000 ,Y
+0x17F6AD8Ef982297579C203069C1DbfFE4348c372, 1788876330000 ,Y
 0x17F6AD8Ef982297579C203069C1DbfFE4348c372
 0x5c6B0f7Bf3E7ce046039Bd8FABdfD3f9F5021678
 */
@@ -44,8 +44,7 @@ contract InterFi is ERC20{
             transfer(owner, 50000000000000000000);
     }
         
-    
-    
+   
 
         
     function getBalanceOfAddress(address payable _sender) public view  returns (uint256) {
@@ -81,18 +80,22 @@ contract InterFi is ERC20{
     struct Child {
         address payable Address;
         address payable invester;
-        uint256 releaseTime;
         uint256 amount;
-        bool isReleasable;
         string name;
+       
     }
 
-    // todo : transaction ların release time ları nasıl tutulacak
+    struct transaction{                
+        uint256 amount;
+        uint256 releaseTime;        
+        bool isWithdrawn;
+    }
     
 
     mapping(address => Child) private addressToChild;
     mapping(address => Parent) private addressToParent;
-
+    // map child address to map key as unique description , value as transaction info
+    mapping(address => mapping(string => transaction)) private addressToTransaction;
    
     modifier onlyOwner() {        
         if (msg.sender != owner) {
@@ -100,8 +103,8 @@ contract InterFi is ERC20{
         }
         _;
     }
-    modifier onlyisReleaseState() {
-        bool state = checkReleaseTime(payable(msg.sender));
+    modifier onlyisReleaseState(string memory _description) {
+        bool state = checkReleaseTime(payable(msg.sender),_description);
         if (state == false) {
             revert Not_released_yet();
         }
@@ -139,8 +142,7 @@ contract InterFi is ERC20{
     }
 
     function addChild(
-        address payable _child,
-        uint256 _releaseTime,
+        address payable _child,        
         string memory _name
     ) public {
         Parent storage parent = addressToParent[msg.sender];
@@ -149,8 +151,7 @@ contract InterFi is ERC20{
         Child storage child = addressToChild[_child];
         require(child.Address == address(0), "This_Child_Already_Exist");
 
-        child.Address = _child;
-        child.releaseTime = _releaseTime;
+        child.Address = _child;        
         child.amount = 0;
         child.invester = payable(msg.sender);
         child.name = _name;
@@ -158,10 +159,15 @@ contract InterFi is ERC20{
     }
 
     // todo: check releaseTime of the transaction request
-    function checkReleaseTime(address payable _child) public view returns (bool) {
-        console.log(block.timestamp*1000);
+    function checkReleaseTime(address payable _child,string memory _description) public view returns (bool) {
+        console.log("checkReleaseTime currentTime : ",block.timestamp*1000);
         Child storage child = addressToChild[_child];
-        uint256 releaseTime = child.releaseTime;
+        require(child.Address != address(0),"There is no child with this address" );
+        
+        uint256 releaseTime = addressToTransaction[_child][_description].releaseTime;
+        require(releaseTime != 0,"There is no fund  with this description" );
+
+        //uint256 releaseTime = child.releaseTime;
         console.log(releaseTime);
 
         if ((block.timestamp*1000) > releaseTime) {
@@ -223,25 +229,21 @@ contract InterFi is ERC20{
             for (uint i = 0; i < parent.children.length; i++) {
                 result[i] = addressToChild[parent.children[i]];
             }
-    }
-
+    }    
     
-    // todo:  get the transaction release time
-    function getReleaseTime(address payable _child) public view returns (uint256) {
-        Child storage child = addressToChild[_child];
-        return child.releaseTime;
+    function getReleaseTime(address payable _child,string memory _description) public view returns (uint256) {
+        Child storage child = addressToChild[_child];                
+        require(child.Address != address(0), "There_Is_No_Such_Child");        
+        uint256 releaseTime = addressToTransaction[_child][_description].releaseTime;
+        return releaseTime;
     }
-    
-
-    // todo: parent transfer token to the child in general 
-
-    // get amount of ether from child balance , send to the msg.sender wallet
-    function fund(address payable _child) public payable {
-        // check the parent exist
+        
+    function fund(address payable _child,uint256 _releaseTime,string memory uniqueDescription) public payable {
+        
         Parent storage parent = addressToParent[msg.sender];
         require(parent.Address != address(0), "There_Is_No_Such_Parent");
 
-        // check this child belongs to this parent
+        
         uint256 size = parent.children.length;
         uint256 index;
         for (uint256 i = 0; i < size; i++) {
@@ -252,24 +254,19 @@ contract InterFi is ERC20{
         if (index >= 0) {
             Child storage child = addressToChild[_child];
             emit Purchase(msg.sender, 1);
-            child.amount += msg.value;
+            child.amount += msg.value;           
+
+            //_transfer(msg.sender,address(this), msg.value);
+            increaseAllowance(_child, msg.value);
            
-
-
-           //_transfer(msg.sender,address(this), msg.value);
-           increaseAllowance(_child, msg.value);
-
-            // get remain token on contract
+            addressToTransaction[_child][uniqueDescription] = transaction(msg.value,_releaseTime,false);    
+        
+            
              uint256 remainToken = balanceOf(msg.sender);
             console.log("remain token on parent : ", remainToken);
 
             uint256 allowance = allowance(msg.sender, _child);
-            console.log("allowance token on child : ", allowance);
-
-           // transfer(_child, msg.value);
-
-
-
+            console.log("allowance token on child : ", allowance);       
 
         } else {
             revert There_is_no_child_belongs_parent();
@@ -285,13 +282,13 @@ contract InterFi is ERC20{
     event Purchase(address indexed _invester, uint256 _amount);
 
 
-    // todo:  parent transfer token from the contract in general , belli değil
+    
     // parent can get amount of coin from his/her child balance ,msg.sender has to be parent
     function withdrawParent(address payable _child,uint256 _amount)
         public
         payable
     {
-        // check the parent exist
+        
         Parent storage parent = addressToParent[msg.sender];
         require(parent.Address != address(0), "There_Is_No_Such_Parent");
 
@@ -303,7 +300,7 @@ contract InterFi is ERC20{
             addressToChild[_child].invester == payable(msg.sender),
             "This_child_is_not_belongs_parent"
         );
-        // get child
+        
         Child storage child = addressToChild[_child];
 
         
@@ -318,21 +315,21 @@ contract InterFi is ERC20{
        uint256 allowance = allowance(msg.sender, _child);
        console.log("allowance token on child : ", allowance);
 
-        // get remain token on contract
+        
         uint256 remainToken = balanceOf(address(this));
         console.log("remain token on contract : ", remainToken);
 
 
     }
 
-    // todo : child transfer token from the contract in general , belli değil
+    
     //  child can get amount of coin from his/her balance, msg.sender has to be child
-    function withdrawChild(uint256 _amount)
+    function withdrawChild(uint256 _amount,string memory _uniqueDescription)
         public
         payable
         
-    onlyisReleaseState {   
-        // check the child exist
+    onlyisReleaseState(_uniqueDescription) {   
+        
         Child storage child = addressToChild[msg.sender];
         require(
             child.Address != address(0),
@@ -346,6 +343,8 @@ contract InterFi is ERC20{
             //payable(msg.sender).transfer(_amount); // send the amount of value to the parent address
             //transefer token from contract to child address 
             _transfer(child.invester,msg.sender, _amount);
+            decreaseAllowance(msg.sender, _amount);        
+            addressToTransaction[msg.sender][_uniqueDescription].isWithdrawn = true;
 
         } else {
             revert There_is_no_enough_child_balance_to_draw();
