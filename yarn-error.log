@@ -1,8 +1,8 @@
 Arguments: 
-  /usr/local/bin/node /opt/homebrew/Cellar/yarn/1.22.19/libexec/bin/yarn.js add --dev @nomiclabs/hardhat-ethers@npm:hardhat-deloy-ethers ethers
+  /usr/local/bin/node /opt/homebrew/Cellar/yarn/1.22.19/libexec/bin/yarn.js add --dev @openzeppelin/contracts/token
 
 PATH: 
-  /Users/hasanyigitkaya/opt/anaconda3/bin:/Users/hasanyigitkaya/opt/anaconda3/condabin:Users/hasanyigitkaya/flutter/bin:/Users/hasanyigitkaya/.local/share/solana/install/active_release/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/hasanyigitkaya/flutter/bin:/usr/local/go/bin:/Library/Apple/usr/bin:/Users/hasanyigitkaya/.cargo/bin:/Users/hasanyigitkaya/Library/Application Support/JetBrains/Toolbox/scripts
+  Users/hasanyigitkaya/flutter/bin:/Users/hasanyigitkaya/.local/share/solana/install/active_release/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/hasanyigitkaya/flutter/bin:/usr/local/go/bin:/Library/Apple/usr/bin:/Users/hasanyigitkaya/opt/anaconda3/bin:/Users/hasanyigitkaya/opt/anaconda3/condabin:Users/hasanyigitkaya/flutter/bin:/Users/hasanyigitkaya/.local/share/solana/install/active_release/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Library/Frameworks/Python.framework/Versions/3.10/bin:/Users/hasanyigitkaya/.cargo/bin:/Users/hasanyigitkaya/Library/Application Support/JetBrains/Toolbox/scripts:/Users/hasanyigitkaya/Library/Application Support/JetBrains/Toolbox/scripts
 
 Yarn version: 
   1.22.19
@@ -14,8 +14,8 @@ Platform:
   darwin arm64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/hardhat-deloy-ethers: Not found
-      at Request.params.callback [as _callback] (/opt/homebrew/Cellar/yarn/1.22.19/libexec/lib/cli.js:66145:18)
+  Error: https://registry.yarnpkg.com/@openzeppelin%2fcontracts/token: Request "https://registry.yarnpkg.com/@openzeppelin%2fcontracts/token" returned a 405
+      at Request.params.callback [as _callback] (/opt/homebrew/Cellar/yarn/1.22.19/libexec/lib/cli.js:66154:18)
       at Request.self.callback (/opt/homebrew/Cellar/yarn/1.22.19/libexec/lib/cli.js:140890:22)
       at Request.emit (node:events:527:28)
       at Request.<anonymous> (/opt/homebrew/Cellar/yarn/1.22.19/libexec/lib/cli.js:141862:10)
@@ -43,12 +43,14 @@ npm manifest:
       "@nomicfoundation/hardhat-chai-matchers": "^1.0.0",
       "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
       "@nomicfoundation/hardhat-toolbox": "^1.0.1",
-      "@nomiclabs/hardhat-ethers": "^2.0.0",
+      "@nomiclabs/hardhat-ethers": "^2.1.1",
       "@nomiclabs/hardhat-etherscan": "^3.0.0",
+      "@openzeppelin/contracts-upgradeable": "^4.7.3",
+      "@openzeppelin/hardhat-upgrades": "^1.20.0",
       "@typechain/ethers-v5": "^10.1.0",
       "@typechain/hardhat": "^6.1.2",
       "chai": "^4.2.0",
-      "ethers": "^5.4.7",
+      "ethers": "^5.6.9",
       "hardhat-deploy": "^0.11.12",
       "hardhat-gas-reporter": "^1.0.8",
       "prettier": "^2.7.1",
@@ -564,10 +566,10 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/@nomicfoundation/hardhat-toolbox/-/hardhat-toolbox-1.0.2.tgz#342b79e19c456a56d8e76bc2e9cc8474cbcfc774"
     integrity sha512-8CEgWSKUK2aMit+76Sez8n7UB0Ze1lwT+LcWxj4EFP30lQWOwOws048t6MTPfThH0BlSWjC6hJRr0LncIkc1Sw==
   
-  "@nomiclabs/hardhat-ethers@^2.0.0":
-    version "2.1.0"
-    resolved "https://registry.yarnpkg.com/@nomiclabs/hardhat-ethers/-/hardhat-ethers-2.1.0.tgz#9b7dc94d669ad9dc286b94f6f2f1513118c7027b"
-    integrity sha512-vlW90etB3675QWG7tMrHaDoTa7ymMB7irM4DAQ98g8zJoe9YqEggeDnbO6v5b+BLth/ty4vN6Ko/kaqRN1krHw==
+  "@nomiclabs/hardhat-ethers@^2.1.1":
+    version "2.1.1"
+    resolved "https://registry.yarnpkg.com/@nomiclabs/hardhat-ethers/-/hardhat-ethers-2.1.1.tgz#3f1d1ab49813d1bae4c035cc1adec224711e528b"
+    integrity sha512-Gg0IFkT/DW3vOpih4/kMjeZCLYqtfgECLeLXTs7ZDPzcK0cfoc5wKk4nq5n/izCUzdhidO/Utd6ptF9JrWwWVA==
   
   "@nomiclabs/hardhat-etherscan@^3.0.0":
     version "3.1.0"
@@ -584,6 +586,34 @@ Lockfile:
       semver "^6.3.0"
       table "^6.8.0"
       undici "^5.4.0"
+  
+  "@openzeppelin/contracts-upgradeable@^4.7.3":
+    version "4.7.3"
+    resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.7.3.tgz#f1d606e2827d409053f3e908ba4eb8adb1dd6995"
+    integrity sha512-+wuegAMaLcZnLCJIvrVUDzA9z/Wp93f0Dla/4jJvIhijRrPabjQbZe6fWiECLaJyfn5ci9fqf9vTw3xpQOad2A==
+  
+  "@openzeppelin/hardhat-upgrades@^1.20.0":
+    version "1.20.0"
+    resolved "https://registry.yarnpkg.com/@openzeppelin/hardhat-upgrades/-/hardhat-upgrades-1.20.0.tgz#fe1bddc4ab591ccf185caf4cfa269a4851b73599"
+    integrity sha512-ign7fc/ZdPe+KAYCB91619o+wlBr7sIEEt1nqLhoXAJ9f0qVuXkwAaTdLB0MTSWH85TzlUUT2fTJp1ZnZ1o4LQ==
+    dependencies:
+      "@openzeppelin/upgrades-core" "^1.18.0"
+      chalk "^4.1.0"
+      debug "^4.1.1"
+      proper-lockfile "^4.1.1"
+  
+  "@openzeppelin/upgrades-core@^1.18.0":
+    version "1.18.0"
+    resolved "https://registry.yarnpkg.com/@openzeppelin/upgrades-core/-/upgrades-core-1.18.0.tgz#a5db80d15e6b87d45307ad27314c91807a506c00"
+    integrity sha512-fFp5sscGC876yhq7BU595LG45yky21sZFa6cDJigluUjAyJSPoLwF7GD9bSwQMMo4jC7ii1UJBtLipUxN6PVTA==
+    dependencies:
+      cbor "^8.0.0"
+      chalk "^4.1.0"
+      compare-versions "^4.0.0"
+      debug "^4.1.1"
+      ethereumjs-util "^7.0.3"
+      proper-lockfile "^4.1.1"
+      solidity-ast "^0.4.15"
   
   "@scure/base@~1.1.0":
     version "1.1.1"
@@ -1547,6 +1577,13 @@ Lockfile:
       bignumber.js "^9.0.1"
       nofilter "^1.0.4"
   
+  cbor@^8.0.0:
+    version "8.1.0"
+    resolved "https://registry.yarnpkg.com/cbor/-/cbor-8.1.0.tgz#cfc56437e770b73417a2ecbfc9caf6b771af60d5"
+    integrity sha512-DwGjNW9omn6EwP70aXsn7FQJx5kO12tX0bZkaTjzdVFM6/7nhA4t0EENocKGx6D2Bch9PE2KzCUf5SceBdeijg==
+    dependencies:
+      nofilter "^3.1.0"
+  
   chai-as-promised@^7.1.1:
     version "7.1.1"
     resolved "https://registry.yarnpkg.com/chai-as-promised/-/chai-as-promised-7.1.1.tgz#08645d825deb8696ee61725dbf590c012eb00ca0"
@@ -1785,6 +1822,11 @@ Lockfile:
     version "3.0.2"
     resolved "https://registry.yarnpkg.com/commander/-/commander-3.0.2.tgz#6837c3fb677ad9933d1cfba42dd14d5117d6b39e"
     integrity sha512-Gar0ASD4BDyKC4hl4DwHqDrmvjoxWKZigVnAbn5H1owvm4CxCPdb0HQDehwNYMJpla5+M2tPmPARzhtYuwpHow==
+  
+  compare-versions@^4.0.0:
+    version "4.1.4"
+    resolved "https://registry.yarnpkg.com/compare-versions/-/compare-versions-4.1.4.tgz#3571f4d610924d4414846a4183d386c8f3d51112"
+    integrity sha512-FemMreK9xNyL8gQevsdRMrvO4lFCkQP7qbuktn1q8ndcNk1+0mz7lgE7b/sNvbhVgY4w6tMN1FDp6aADjqw2rw==
   
   component-emitter@^1.2.0:
     version "1.3.0"
@@ -2572,7 +2614,7 @@ Lockfile:
       ethjs-util "0.1.6"
       rlp "^2.2.3"
   
-  ethereumjs-util@^7.0.10, ethereumjs-util@^7.1.0, ethereumjs-util@^7.1.1, ethereumjs-util@^7.1.4, ethereumjs-util@^7.1.5:
+  ethereumjs-util@^7.0.10, ethereumjs-util@^7.0.3, ethereumjs-util@^7.1.0, ethereumjs-util@^7.1.1, ethereumjs-util@^7.1.4, ethereumjs-util@^7.1.5:
     version "7.1.5"
     resolved "https://registry.yarnpkg.com/ethereumjs-util/-/ethereumjs-util-7.1.5.tgz#9ecf04861e4fbbeed7465ece5f23317ad1129181"
     integrity sha512-SDl5kKrQAudFBUe5OJM9Ac6WmMyYmXX/6sTmLZ3ffG2eY6ZIGBes3pEDxNN6V72WyOw4CPD5RomKdsa8DAAwLg==
@@ -2598,7 +2640,7 @@ Lockfile:
       uuid "2.0.1"
       xmlhttprequest "1.8.0"
   
-  ethers@^5.4.7, ethers@^5.5.3:
+  ethers@^5.5.3, ethers@^5.6.9:
     version "5.6.9"
     resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.6.9.tgz#4e12f8dfcb67b88ae7a78a9519b384c23c576a4d"
     integrity sha512-lMGC2zv9HC5EC+8r429WaWu3uWJUCgUCt8xxKCFqkrFuBDZXDYIdzDUECxzjf2BMF8IVBByY1EBoGSL3RTm8RA==
@@ -3441,7 +3483,7 @@ Lockfile:
       url-parse-lax "^1.0.0"
       url-to-options "^1.0.1"
   
-  graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9, graceful-fs@^4.2.0:
+  graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9, graceful-fs@^4.2.0, graceful-fs@^4.2.4:
     version "4.2.10"
     resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.10.tgz#147d3a006da4ca3ce14728c7aefc287c367d7a6c"
     integrity sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==
@@ -5007,6 +5049,11 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/nofilter/-/nofilter-1.0.4.tgz#78d6f4b6a613e7ced8b015cec534625f7667006e"
     integrity sha512-N8lidFp+fCz+TD51+haYdbDGrcBWwuHX40F5+z0qkUjMJ5Tp+rdSuAkMJ9N9eoolDlEVTf6u5icM+cNKkKW2mA==
   
+  nofilter@^3.1.0:
+    version "3.1.0"
+    resolved "https://registry.yarnpkg.com/nofilter/-/nofilter-3.1.0.tgz#c757ba68801d41ff930ba2ec55bab52ca184aa66"
+    integrity sha512-l2NNj07e9afPnhAhvgVrCD/oy2Ai1yfLpuo3EpiO1jFTsB4sFz6oIfAfSZyQzVpkZQ9xS8ZS5g1jCBgq4Hwo0g==
+  
   noncharacters@^1.1.0:
     version "1.1.0"
     resolved "https://registry.yarnpkg.com/noncharacters/-/noncharacters-1.1.0.tgz#af33df30fd50ed3c53cd202258f25ada90b540d2"
@@ -5463,6 +5510,15 @@ Lockfile:
     dependencies:
       asap "~2.0.6"
   
+  proper-lockfile@^4.1.1:
+    version "4.1.2"
+    resolved "https://registry.yarnpkg.com/proper-lockfile/-/proper-lockfile-4.1.2.tgz#c8b9de2af6b2f1601067f98e01ac66baa223141f"
+    integrity sha512-TjNPblN4BwAWMXU8s9AEz4JmQxnD1NNL7bNOY/AKUzyamc379FWASUhc/K1pL2noVb+XmZKLL68cjzLsiOAMaA==
+    dependencies:
+      graceful-fs "^4.2.4"
+      retry "^0.12.0"
+      signal-exit "^3.0.2"
+  
   proxy-addr@~2.0.7:
     version "2.0.7"
     resolved "https://registry.yarnpkg.com/proxy-addr/-/proxy-addr-2.0.7.tgz#f19fe69ceab311eeb94b42e70e8c2070f9ba1025"
@@ -5816,6 +5872,11 @@ Lockfile:
       onetime "^2.0.0"
       signal-exit "^3.0.2"
   
+  retry@^0.12.0:
+    version "0.12.0"
+    resolved "https://registry.yarnpkg.com/retry/-/retry-0.12.0.tgz#1b42a6266a21f07421d1b0b54b7dc167b01c013b"
+    integrity sha512-9LkiTwjUh6rT555DtE9rTX+BKByPfrMzEAtnlEtdEwr3Nkffwiihqe2bWADg+OQRjt9gl6ICdmB/ZFDCGAtSow==
+  
   reusify@^1.0.4:
     version "1.0.4"
     resolved "https://registry.yarnpkg.com/reusify/-/reusify-1.0.4.tgz#90da382b1e126efc02146e90845a88db12925d76"
@@ -6149,6 +6210,11 @@ Lockfile:
       semver "^6.3.0"
     optionalDependencies:
       prettier "^1.14.3"
+  
+  solidity-ast@^0.4.15:
+    version "0.4.35"
+    resolved "https://registry.yarnpkg.com/solidity-ast/-/solidity-ast-0.4.35.tgz#82e064b14dc989338123264bde2235cad751f128"
+    integrity sha512-F5bTDLh3rmDxRmLSrs3qt3nvxJprWSEkS7h2KmuXDx7XTfJ6ZKVTV1rtPIYCqJAuPsU/qa8YUeFn7jdOAZcTPA==
   
   solidity-coverage@^0.7.21:
     version "0.7.21"
